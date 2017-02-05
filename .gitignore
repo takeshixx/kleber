@@ -87,3 +87,8 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Kleber specific
+kleber/kleber_secrets.py
+uploads/
+*.sqlite3
