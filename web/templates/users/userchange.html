@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block title %}{{ block.super }} - Change User{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-xs-4 col-xs-offset-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span>Change User</span>
+            </div>
+            <div class="panel-body">
+                <form action="{% url 'users_userchange' %}" method="post" accept-charset="utf-8" class="form">
+                    {% csrf_token %}
+                    {% bootstrap_form form %}
+                    {% buttons %}
+                    <button type="submit" class="btn btn-primary">Change user</button>
+                    {% endbuttons %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

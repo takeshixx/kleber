@@ -1,0 +1,51 @@
+{% extends 'bootstrap3/bootstrap3.html' %}
+{% block bootstrap3_title %}{% block title %}Kleber{% endblock %}{% endblock %}
+{% load bootstrap3 %}
+
+{% block bootstrap3_extra_head %}
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+{#    {% if user.is_authenticated and user.userconfig.theme != 'default' %}#}
+{#    <link href="https://bootswatch.com/slate/bootstrap.min.css" rel="stylesheet">#}
+{#    {% endif %}#}
+{% endblock %}
+
+{% block bootstrap3_content %}
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">KLEBER</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-left">
+                <li><a href="{% url 'upload' %}"><span class="fa fa-paste"></span> New</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'upload_history' %}"><span class="fa fa-history"></span> History</a></li>
+                {% endif %}
+                <li><a href="{% url 'about' %}"><span class="glyphicon glyphicon-info-sign"></span> About</a></li>
+                <li><a href="{% url 'cli' %}"><span class="fa fa-terminal" style="font-weight: 900;"></span> CLI</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'users_account' %}"><span class="fa fa-user"></span> Account</a></li>
+                <li><a href="{% url 'users_logout' %}"><span class="fa fa-sign-out"></span> Logout</a></li>
+                {% else %}
+                <li><a href="{% url 'users_register' %}"><span class="glyphicon glyphicon-list-alt"></span> Register</a></li>
+                <li><a href="{% url 'users_login' %}"><span class="fa fa-sign-in"></span> Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+        {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
+        {% block content %}(no content){% endblock %}
+    </div>
+{% endblock %}

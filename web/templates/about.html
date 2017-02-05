@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block title %}{{ block.super }} - About{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>About</h1>
+    <p>Kleber is a pastebin with various features like paste encryption, file uploads, removal of metadata from uploaded files, an upload history and a RESTful, JSON-based API. It can be either used via the web or the official <a href="{%  url 'cli' %}">command line client</a> on POSIX compatible shells.</p>
+    <div class="alert alert-info" role="alert"><span class="fa fa-info-circle"></span>&nbsp; Pastes/Uploads will be deleted after 10 days unless they are smaller than 100 kb.</div>
+    <br>
+    <h2>Contact</h2>
+    <p>Write an email to <a href="mailto:&#105;&#110;&#102;&#111;&#064;&#107;&#108;&#101;&#098;&#101;&#114;&#046;&#105;&#111;">&#105;&#110;&#102;&#111;&#064;&#107;&#108;&#101;&#098;&#101;&#114;&#046;&#105;&#111;</a>.</p>
+    <br>
+    <h2>Metadata</h2>
+    <p>The following description was stolen from <a href="https://en.wikipedia.org/wiki/Metadata">Wikipedia</a>:</p>
+    <div class="well">
+        <p>Metadata is "data about data". Two types of metadata exist: structural metadata and descriptive metadata. Structural metadata is data about the containers of data. Descriptive metadata uses individual instances of application data or the data content.</p>
+        <p>Metadata (metacontent) is defined as the data providing information about one or more aspects of the data, such as:
+        <p>
+        <ul>
+            <li>Means of creation of the data</li>
+            <li>Purpose of the data</li>
+            <li>Time and date of creation</li>
+            <li>Creator or author of the data</li>
+            <li>Location on a computer network where the data was created</li>
+            <li>Standards used</li>
+        </ul>
+        <p>For example, a digital image may include metadata that describe how large the picture is, the color depth, the image resolution, when the image was created, and other data. A text document's metadata may contain information about how long the document is, who the author is, when the document was written, and a short summary of the document.</p>
+    </div>
+    <p>Here are some resources about metadata:</p>
+    <ul>
+        <li><a href="http://www.metadataworkinggroup.com/pdf/mwg_guidance.pdf">Guidelines for Handling Image Metadata (MWG)</a></li>
+        <li><a href="http://www.niso.org/publications/press/UnderstandingMetadata.pdf">Understanding Metadata (NISO)</a></li>
+        <li><a href="http://www.bls.gov/ore/pdf/st000010.pdf">Metadata Standards and Metadata Registries: An Overview (BLS)</a></li>
+    </ul>
+    <br>
+    <h3>Removal of Metadata</h3>
+    <p>Kleber provides a metadata removal backend based on <a href="http://www.sno.phy.queensu.ca/~phil/exiftool/">ExifTool</a>. It allows to remove metadata like EXIF tags in image files during the upload. This allows to share clean files.</p>
+    <br>
+    <h2>Paste Encryption</h2>
+    <p>Encryption of pastes is done in the browser with the <a href="https://github.com/digitalbazaar/forge">Forge</a> JavaScript library. By encrypting pastes, Kleber does not know the content of these pastes. The Forge JavaScript library is used to symmetrically encrypt pastes with AES256 in <a href="https://en.wikipedia.org/wiki/Galois/Counter_Mode">GCM</a> mode. Each paste is encrypted with a random key and IV.</p>
+    <p>Because the key never hits the wire, encryption of the paste only works with the URL that will be created in the JavaScript upon paste creation. You can share this link with everyone that should be able to read the paste content. Everyone else who just knows the ID of the paste, will only receive the encrypted content. This also applies to Kleber itself.
+    <div class="alert alert-danger" role="alert">Keep in mind that this feature will not provide 100% security!</div>
+    <br>
+    <h2>Secure URL</h2>
+    <p>The Secure URL option allows the creation of pastes with longer shortcuts that are not easily guessable. This enhances the privacy of pastes as they won't be accessible upon bruteforcing the shortcut charater range.</p>
+    <br>
+    <h2>Hidden Service</h2>
+    <p>Kleber is available as a hidden service from within the Tor network. This allows to share pastes and files fully anonymous. If you are really concerned about your privacy, you should use Kleber via the hidden service.</p>
+    <p>You should keep in mind that even if you use Kleber via TOR, you may be identified by personal information that you or your client (most likely your browser) leaks. Always be careful about the information you disclose to services you are communicating with.</p>
+    <p>Please read the official <a href="https://www.torproject.org/docs/faq.html.en#AttacksOnOnionRouting">TOR FAQ</a> carefully and follow those advices.
+    <br>
+    <h2>Privacy</h2>
+    <p>Removing metadata from files shared to potentially untrusted parties on the Internet can enhance a user's privacy online. However, user have to keep in mind that removing metadata requires previous parsing of corresponding files. Besides parsing them, they might be modified.</p>
+    <p>Unlike files, pastes are not affected by this. The backend just tries to determine mimetypes, but it won't modify pastes in any way. Parsing paste content, for e.g. pretty printing code snippets is done on the client side.</p>
+    <p>If you are really concerned about your privacy, you should use the TOR hidden service.</p>
+</div>
+{% endblock %}

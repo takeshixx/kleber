@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block bootstrap3_extra_head %}
+    {{ block.super }}
+    <style>
+
+    </style>
+{% endblock %}
+
+{% block title %}{{ block.super }} - User Account{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-xs-6 col-xs-offset-3">
+        <div class="panel panel-primary">
+            <div class="panel-heading"><b>User Profile</b></div>
+            <table class="table">
+                <tr><td><b>Uername</b></td><td>{{ request.user.username }}</td></tr>
+                <tr><td><b>Email address</b></td><td>{{ request.user.email }}</td></tr>
+                <tr><td><b>Registration date</b></td><td>{{ request.user.date_joined }}</td></tr>
+            </table>
+            <div class="panel-footer">
+                <div class="btn-toolbar" role="toolbar">
+                    {% url 'users_userchange' as userchange_url %}
+                    {% bootstrap_button "Change email address" button_class="btn btn-primary" href=userchange_url %}
+                    {% url 'users_pwchange' as pwchange_url %}
+                    {% bootstrap_button "Change password" button_class="btn btn-primary" href=pwchange_url %}
+                    {% bootstrap_button "Delete account" button_class="btn btn-danger" href="#" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-6 col-xs-offset-3">
+        <div class="panel panel-info">
+            <div class="panel-heading"><b>API Keys</b></div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Key</th>
+                        <th>Creation Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="panel-footer">
+                <div class="btn-toolbar" role="toolbar">
+                    {% bootstrap_button "Create API key" button_class="btn-primary" href="#" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-6 col-xs-offset-3">
+        <div class="panel panel-warning">
+            <div class="panel-heading"><b>Invite Codes</b></div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Code</th>
+                        <th>Receiver</th>
+                        <th>Creation Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="panel-footer">
+                <div class="btn-toolbar" role="toolbar">
+                    {% bootstrap_button "Create invite code" button_class="btn-primary" href="#" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

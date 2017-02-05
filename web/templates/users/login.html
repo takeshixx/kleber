@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block title %}{{ block.super }} - Login{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-xs-4 col-xs-offset-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span>Login</span>
+            </div>
+            <div class="panel-body">
+                <form action="{% url 'users_login' %}" method="post" accept-charset="utf-8" class="form">
+                    {% csrf_token %}
+                    {% bootstrap_form form %}
+
+                    {% buttons %}
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    {% endbuttons %}
+                    <div class="etc-login-form">
+                        <a href="{% url 'users_pwreset' %}">Forgot your password?</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

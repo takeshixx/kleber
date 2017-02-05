@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load unitconvert %}
+{% load metadata %}
+
+{% block bootstrap3_extra_head %}
+    {{ block.super }}
+    <style>
+        .pagination {
+            margin: 0;}
+        .upload-info-col {
+            margin: 0 !important;}
+        .upload-info-row:hover td {
+            background-color: #2e3338;}
+    </style>
+{% endblock %}
+
+{% block title %}{{ block.super }} - Upload History{% endblock %}
+
+{% block content %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <b>Upload History</b>
+        <ul class="list-inline pull-right">
+            <li>Quota: <b>-</b> / <b>-</b></li>
+            <li>Count: <b>{{ pastes|length }}</b></li>
+            <li>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Limit <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a href="{% url 'upload_history' %}?limit=10">10</a></li>
+                    <li><a href="{% url 'upload_history' %}?limit=25">25</a></li>
+                    <li><a href="{% url 'upload_history' %}?limit=50">50</a></li>
+                    <li><a href="{% url 'upload_history' %}?limit=100">100</a></li>
+                  </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Mimetype</th>
+                <th>Size</th>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Meta</th>
+                <th>Crypt</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for paste in lines %}
+            <tr>
+                <td><a href="/{{ paste.shortcut }}">{% if paste.name %}{{ paste.name }}{% else %}{{ paste.shortcut }}{% endif %}</a></td>
+                <td>{{ paste.mimetype }}</td>
+                <td>{{ paste.size|print_unit }}</td>
+                <td>{{ paste.created }}</td>
+                <td><i class="fa {% if paste.is_file %}fa-file-o" title="File{% else %}fa-pencil-square-o" title="Paste{% endif %}" data-toggle="tooltip" data-placement="bottom"></i></td>
+                <td>{% if paste.is_file %}{{ paste.meta }}{% endif %}</td>
+                <td><i class="fa {% if paste.is_encrypted %}fa-lock{% else %}fa-unlock{% endif %}"></i></td>
+                <td>
+                    {% url 'uploads' shortcut=paste.shortcut as paste_url %}
+                    <button type="button" class="btn btn-info btn-xs" data-toggle="collapse" data-target="#upload-info-{{ paste.shortcut }}">Info</button>
+                    {% with paste_url|add:"/delete" as paste_url_delete %}
+                        {% bootstrap_button "Delete" href=paste_url_delete button_class="btn-danger btn-xs" %}
+                    {% endwith %}
+                </td>
+            </tr>
+            <tr id="upload-info-{{ paste.shortcut }}" class="collapse upload-info-row">
+                <td colspan="8">
+                    <ul class="upload-info-col">
+                            <li><b>Shortcut:</b> {{ paste.shortcut }}{% if paste.secure_shortcut %} <span class="label label-default">secure</span>{% endif %}</li>
+                        {% if paste.mimetype_long %}
+                            <li><b>Mimetype Long:</b> {{ paste.mimetype_long }}</li>
+                        {% endif %}
+                        {% if paste.lifetime %}
+                            <li><b>Deletion Date:</b> {{ paste.lifetime }}</li>
+                        {% endif %}
+                        {% if paste.is_file %}
+                            {% if paste.checksum %}
+                                <li><b>Checksum (SHA256):</b> {{ paste.checksum }}</li>
+                            {% endif %}
+                            {% if paste.metadata %}
+                                <li><b>Metadata:</b>
+                                    <table>
+                                        <tbody>
+                                        {% with paste.metadata|print_metadata as metadata %}
+                                            {% for meta,data in metadata.items %}
+                                            <tr><td><b>{{ meta }}</b></td><td>{{ data }}</td></tr>
+                                            {% endfor %}
+                                        {% endwith %}
+                                        </tbody>
+                                    </table>
+                                </li>
+                            {% endif %}
+                        {% else %}
+                            {% if paste.lexer %}
+                                <li><b>Lexer:</b> {{ paste.lexer }}</li>
+                            {% endif %}
+                        {% endif %}
+
+                    </ul>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% bootstrap_pagination lines url="/uploads/?page=1" size="small" %}
+{% endblock %}
