@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load bootstrap3 %}
-{% load unitconvert %}
 {% load metadata %}
 
 {% block bootstrap3_extra_head %}
@@ -56,7 +55,7 @@
             <tr>
                 <td><a href="/{{ paste.shortcut }}">{% if paste.name %}{{ paste.name }}{% else %}{{ paste.shortcut }}{% endif %}</a>{% if paste.is_encrypted %} <span class="label label-success">encrypted</span>{% endif %}</td>
                 <td>{{ paste.mimetype }}</td>
-                <td>{{ paste.size|print_unit }}</td>
+                <td>{{ paste.size|filesizeformat }}</td>
                 <td>{{ paste.created }}</td>
                 <td><i class="fa {% if paste.is_file %}fa-file-o" title="File{% else %}fa-pencil-square-o" title="Paste{% endif %}" data-toggle="tooltip" data-placement="bottom"></i></td>
                 <td>{% if paste.is_file %}{{ paste.meta }}{% endif %}</td>

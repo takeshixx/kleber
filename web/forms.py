@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.template.defaultfilters import filesizeformat
 
 from .models import Paste, File
 
@@ -10,6 +11,8 @@ LIFETIMES = [(0, 'Never expires'),
              (600, 'Expires after 10 minutes'),
              (43200, 'Expires after 12 hours'),
              (604800, 'Expires after 1 week')]
+
+MAX_UPLOAD_SIZE = 214958080 # 250 MB
 
 
 class CreatePasteForm(forms.ModelForm):

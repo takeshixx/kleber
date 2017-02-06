@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load bootstrap3 %}
-{% load unitconvert %}
 {% load metadata %}
 
 {% block bootstrap3_extra_head %}
@@ -99,7 +98,7 @@
             {% if paste.lifetime %}
                 <tr><td><b>Deletion Date:</b></td><td>{{ paste.lifetime }}</td></tr>
             {% endif %}
-                <tr><td><b>Size:</b></td><td>{{ paste.size|print_unit }}</td></tr>
+                <tr><td><b>Size:</b></td><td>{{ paste.size|filesizeformat }}</td></tr>
             {% if paste.is_file %}
                 {% if paste.checksum %}
                     <tr><td><b>Checksum (SHA256):</b></td><td>{{ paste.checksum }}</td></tr>
@@ -133,7 +132,7 @@
         <b>{% if paste.name %}{{ paste.name }}{% else %}{{ paste.shortcut }}{% endif %}{% if paste.is_encrypted %} <span class="label label-success">encrypted</span>{% endif %}</b>
         <ul class="list-inline pull-right">
             <li>Mimetype: <b>{{ paste.mimetype }}</b></li>
-            <li>Size: <b>{{ paste.size|print_unit }}</b></li>
+            <li>Size: <b>{{ paste.size|filesizeformat }}</b></li>
             <li><i class="fa {% if paste.is_file %}fa-file-o" title="File{% else %}fa-pencil-square-o" title="Paste{% endif %}" data-toggle="tooltip" data-placement="bottom"></i></li>
         </ul>
     </div>
