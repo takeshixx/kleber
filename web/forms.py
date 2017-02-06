@@ -38,7 +38,18 @@ class CreatePasteForm(forms.ModelForm):
     lifetime = forms.ChoiceField(choices=LIFETIMES,
                                  widget=forms.Select(),
                                  required=True)
-    secure_url = forms.BooleanField(required=False)
+    secure_url = forms.BooleanField(required=False,
+                                    label=_('Generate a long shortcut'),
+                                    help_text=_('Longer shortcuts will be harder to guess. So with '
+                                                'this option it will be harder to find this upload '
+                                                'by guessing URLs.'))
+    is_encrypted = forms.BooleanField(required=False,
+                                      label=_('Encrypt paste'),
+                                      help_text=_('The content of pastes will be encrypted in on '
+                                                  'the client side. The key will only be available '
+                                                  'in the URL and will never be sent to the server. '
+                                                  'Make sure to copy the link with the key or else '
+                                                  'the content will not be accessible in clear!'))
 
     class Meta:
         model = Paste
@@ -61,13 +72,19 @@ class UploadFileForm(forms.ModelForm):
     remove_meta = forms.ChoiceField(choices=[(2, 'Remove metadata'),
                                              (1, 'Do not remove metadata'),
                                              (0, 'Do not touch this file')],
-                                    label='What to do with the metadata?',
+                                    label=_('What to do with the metadata?'),
+                                    help_text=_('Controls what should be done with metadata in '
+                                                'uploaded files.'),
                                     widget=forms.Select(),
                                     required=True)
     lifetime = forms.ChoiceField(choices=LIFETIMES,
                                  widget=forms.Select(),
                                  required=True)
-    secure_url = forms.BooleanField(required=False)
+    secure_url = forms.BooleanField(required=False,
+                                    label=_('Generate a long shortcut'),
+                                    help_text=_('Longer shortcuts will be harder to guess. So with '
+                                                'this option it will be harder to find this upload '
+                                                'by guessing URLs.'))
 
     class Meta:
         model = File

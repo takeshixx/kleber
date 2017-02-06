@@ -94,7 +94,7 @@ class KleberInput(models.Model):
             'paste']
         if shortcut:
             self.shortcut = shortcut
-        else:
+        elif not self.shortcut:
             if self.secure_shortcut:
                 min = 25
                 max = 40

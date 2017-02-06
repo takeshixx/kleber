@@ -1,6 +1,59 @@
 {% extends "base.html" %}
 {% load bootstrap3 %}
 
+{% block bootstrap3_extra_head %}
+    {{ block.super }}
+    <script>
+        function create_paste() {
+            console.log('hit it!');
+            var encrypt = document.getElementById('id_is_encrypted');
+            var secure_url = document.getElementById('id_secure_url');
+            var paste_content = document.getElementById('id_content').value;
+            var paste_name = document.getElementById('id_name').value;
+            var paste_lifetime = document.getElementById('id_lifetime').value;
+            var csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+            if(!encrypt.checked || paste_content == '')
+                return true;
+            var random_key = sjcl.random.randomWords(4);
+            var encryption_key = sjcl.codec.hex.fromBits(random_key);
+            var encrypted_content = sjcl.encrypt(encryption_key, paste_content);
+            if (!csrfmiddlewaretoken) {
+                alert('Could not read csrfmiddlewaretoken');
+                return false;
+            }
+            var post_data = '{"content": "' + encodeURIComponent(encrypted_content) + '", ' +
+                            '"name": "' + paste_name + '", ' +
+                            '"lifetime": ' + paste_lifetime + ', ' +
+                            '"secure_shortcut": ' + secure_url.checked + ',' +
+                            '"is_encrypted": true}';
+            var fetch_headers = new Headers();
+            fetch_headers.append('Content-Type', 'application/json; charset=UTF-8');
+            fetch_headers.append('X-CSRFTOKEN', csrfmiddlewaretoken);
+            var fetch_init = {method: 'POST',
+                              headers: fetch_headers,
+                              body: post_data,
+                              credentials: 'include'};
+            var fetch_req = new Request('http://127.0.0.1:8000/api/pastes/', fetch_init);
+            fetch(fetch_req)
+                .then(function (response) {
+                    var contentType = response.headers.get("content-type");
+                    if(contentType && contentType.indexOf("application/json") !== -1) {
+                        return response.json();
+                    } else {
+                        alert('Invalid response');
+                    }
+                })
+                .then(function (json) {
+                    window.location = 'http://127.0.0.1:8000/' + json.shortcut + '#' + encryption_key;
+                })
+                .catch(function (error) {
+                    alert(error);
+                });
+            return false;
+        }
+    </script>
+{% endblock %}
+
 {% block title %}{{ block.super }} - Create New Paste{% endblock %}
 
 {% block content %}
@@ -9,7 +62,7 @@
         <b>Create new paste</b>
     </div>
     <div class="panel-body">
-        <form action="{% url 'upload' %}" method="post" accept-charset="utf-8" class="form">
+        <form action="{% url 'upload' %}" method="post" accept-charset="utf-8" class="form" onsubmit="return create_paste()">
             {% bootstrap_form form %}
             {% csrf_token %}
             {% buttons %}

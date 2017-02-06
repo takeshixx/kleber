@@ -4,9 +4,19 @@
 
 {% block bootstrap3_extra_head %}
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-{#    {% if user.is_authenticated and user.userconfig.theme != 'default' %}#}
-{#    <link href="https://bootswatch.com/slate/bootstrap.min.css" rel="stylesheet">#}
-{#    {% endif %}#}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/slate/bootstrap.min.css" rel="stylesheet" integrity="sha256-cp9lCRHDsELuWqPLwCHG6LXz+nk32BzccNd0N2v5yjM=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sjcl/1.0.6/sjcl.min.js" integrity="sha256-7VEzvbWjCTLLvO8urPO0gk1zqPsLAZVIADdKrwtBbWY=" crossorigin="anonymous"></script>
+    <style>
+        .site-footer {
+            margin-top: 15px;
+            margin-bottom: 50px;
+            border: 1px solid rgba(0,0,0,0.6);
+            font-size: small;
+            padding: 5px 10px;
+            border-radius: 4px!important;}
+        .site-footer ul {
+            margin: 0;}
+    </style>
 {% endblock %}
 
 {% block bootstrap3_content %}
@@ -47,5 +57,17 @@
     <div class="container">
         {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
         {% block content %}(no content){% endblock %}
+    </div>
+
+    <div class="container">
+        <div class="site-footer">
+            <span>© 2017 Kleber</span>
+            <ul class="navbar-right list-inline">
+                <li><a href="/api/" class="links">API</a></li>
+                <li><a href="https://github.com/kleber-io/kleber-cli" class="links">CLI</a></li>
+                <li><a href="/about/#hidden-service" class="links">TOR</a></li>
+                <li><a href="/about/#contact" class="links">Contact</a></li>
+            </ul>
+        </div>
     </div>
 {% endblock %}

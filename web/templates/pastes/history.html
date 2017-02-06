@@ -48,20 +48,18 @@
                 <th>Date</th>
                 <th>Type</th>
                 <th>Meta</th>
-                <th>Crypt</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for paste in lines %}
             <tr>
-                <td><a href="/{{ paste.shortcut }}">{% if paste.name %}{{ paste.name }}{% else %}{{ paste.shortcut }}{% endif %}</a></td>
+                <td><a href="/{{ paste.shortcut }}">{% if paste.name %}{{ paste.name }}{% else %}{{ paste.shortcut }}{% endif %}</a>{% if paste.is_encrypted %} <span class="label label-success">encrypted</span>{% endif %}</td>
                 <td>{{ paste.mimetype }}</td>
                 <td>{{ paste.size|print_unit }}</td>
                 <td>{{ paste.created }}</td>
                 <td><i class="fa {% if paste.is_file %}fa-file-o" title="File{% else %}fa-pencil-square-o" title="Paste{% endif %}" data-toggle="tooltip" data-placement="bottom"></i></td>
                 <td>{% if paste.is_file %}{{ paste.meta }}{% endif %}</td>
-                <td><i class="fa {% if paste.is_encrypted %}fa-lock{% else %}fa-unlock{% endif %}"></i></td>
                 <td>
                     {% url 'uploads' shortcut=paste.shortcut as paste_url %}
                     <button type="button" class="btn btn-info btn-xs" data-toggle="collapse" data-target="#upload-info-{{ paste.shortcut }}">Info</button>
@@ -74,7 +72,7 @@
                 <td colspan="8">
                     <ul class="upload-info-col">
                             <li><b>Shortcut:</b> {{ paste.shortcut }}{% if paste.secure_shortcut %} <span class="label label-default">secure</span>{% endif %}</li>
-                        {% if paste.mimetype_long %}
+                        {% if paste.mimetype_long and paste.mimetype_long != paste.mimetype %}
                             <li><b>Mimetype Long:</b> {{ paste.mimetype_long }}</li>
                         {% endif %}
                         {% if paste.lifetime %}
