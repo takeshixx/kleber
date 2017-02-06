@@ -12,6 +12,8 @@ import pygments.styles
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User, Group, Permission
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 
 # TODO: properly link to user objects
@@ -257,3 +259,10 @@ class File(KleberInput):
         except Exception:
             return 'data'
 
+
+@receiver(post_delete, sender=File)
+def file_post_delete_handler(sender, **kwargs):
+    """Make sure files will be deleted from the file system."""
+    file = kwargs['instance']
+    storage, path = file.uploaded_file.storage, file.uploaded_file.path
+    storage.delete(path)
