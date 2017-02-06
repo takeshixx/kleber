@@ -22,9 +22,9 @@
             </table>
             <div class="panel-footer">
                 <div class="btn-toolbar" role="toolbar">
-                    {% url 'users_userchange' as userchange_url %}
+                    {% url 'account_email' as userchange_url %}
                     {% bootstrap_button "Change email address" button_class="btn btn-primary" href=userchange_url %}
-                    {% url 'users_pwchange' as pwchange_url %}
+                    {% url 'account_change_password' as pwchange_url %}
                     {% bootstrap_button "Change password" button_class="btn btn-primary" href=pwchange_url %}
                     {% bootstrap_button "Delete account" button_class="btn btn-danger" href="#" %}
                 </div>

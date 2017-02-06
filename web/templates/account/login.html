@@ -1,0 +1,50 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load bootstrap3 %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block bootstrap3_extra_head %}
+    {{ block.super }}
+    <style>{{ highlightcss }}
+        .login-prodiver-icons {
+            font-size: 40px;}
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-xs-4 col-xs-offset-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <b>Login</b>
+            </div>
+            <div class="panel-body">
+                <form class="login" method="POST" action="{% url 'account_login' %}">
+                    {% csrf_token %}
+                    {% bootstrap_form form %}
+                    {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                    {% endif %}
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">{% trans "Login" %}</button>
+                    </div>
+                    <div class="etc-login-form">
+                        <a href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+                    </div>
+                </form>
+
+                <hr/>
+                <p>Or login with one of the following 3rd party authentication providers:</p>
+                <div class="text-center">
+                    <div class="btn-group">
+                        <a class="login-prodiver-icons" href="{% provider_login_url "github" %}"><i class="fa fa-github" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

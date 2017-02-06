@@ -22,6 +22,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 from kleber import kleber_secrets
 SECRET_KEY = kleber_secrets.SECRET_KEY
 
+EMAIL_HOST = kleber_secrets.EMAIL_HOST
+EMAIL_PORT = kleber_secrets.EMAIL_PORT
+EMAIL_HOST_USER = kleber_secrets.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = kleber_secrets.EMAIL_HOST_PASSWORD
+EMAIL_USE_TLS = 1
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -39,7 +45,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bootstrap3',
     'rest_framework',
-    'web'
+    'web',
+    # Required by allauth START
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
+    # Required by allauth END
 ]
 
 MIDDLEWARE = [
@@ -50,7 +63,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware'
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware'
 ]
 
 ROOT_URLCONF = 'kleber.urls'
@@ -70,6 +84,14 @@ TEMPLATES = [
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend'
+)
 
 WSGI_APPLICATION = 'kleber.wsgi.application'
 
@@ -130,3 +152,13 @@ REST_FRAMEWORK = {
     ],
     'PAGE_SIZE': 10
 }
+
+SITE_ID = 2
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+#ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+ACCOUNT_PASSWORD_MIN_LENGTH = 8
+ACCOUNT_USERNAME_MIN_LENGTH = 3
+
+LOGIN_REDIRECT_URL = '/'

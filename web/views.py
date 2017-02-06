@@ -1,13 +1,10 @@
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, logout
-from django.contrib.auth.forms import AuthenticationForm
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.contrib.auth.forms import PasswordResetForm, PasswordChangeForm
 import pygments.formatters
 
 from .models import KleberInput
-from .forms import RegisterUser, CreatePasteForm, UploadFileForm, ChangeUserForm
+from .forms import CreatePasteForm, UploadFileForm
 from mal.shortcuts import remove_metadata, retrieve_metadata
 
 
@@ -131,66 +128,6 @@ def delete(request, shortcut):
         return redirect('upload_history')
     else:
         return redirect('index')
-
-
-def user_register(request):
-    if request.method == 'POST':
-        form = RegisterUser(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('users_login')
-    else:
-        form = RegisterUser()
-    return render(request, 'users/register.html', {'form': form})
-
-
-def user_login(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            login(request, form.get_user())
-            return redirect('index')
-    else:
-        form = AuthenticationForm()
-    return render(request, 'users/login.html', {'form': form})
-
-
-def user_logout(request):
-    logout(request)
-    return redirect('/')
-
-
-def users_pwreset(request):
-    if request.method == 'POST':
-        form = PasswordResetForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('users_login')
-    else:
-        form = PasswordResetForm()
-    return render(request, 'users/pwreset.html', {'form': form})
-
-
-def users_pwchange(request):
-    if request.method == 'POST':
-        form = PasswordChangeForm(request.user, request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('users_account')
-    else:
-        form = PasswordChangeForm(request.user)
-    return render(request, 'users/pwchange.html', {'form': form})
-
-
-def users_userchange(request):
-    if request.method == 'POST':
-        form = ChangeUserForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect('users_account')
-    else:
-        form = ChangeUserForm(instance=request.user)
-    return render(request, 'users/userchange.html', {'form': form})
 
 
 def user_account(request):

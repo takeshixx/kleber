@@ -1,6 +1,6 @@
 {% extends 'bootstrap3/bootstrap3.html' %}
-{% block bootstrap3_title %}{% block title %}Kleber{% endblock %}{% endblock %}
 {% load bootstrap3 %}
+{% block bootstrap3_title %}{% block title %}Kleber{% endblock %}{% endblock %}
 
 {% block bootstrap3_extra_head %}
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
@@ -44,10 +44,10 @@
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
                 <li><a href="{% url 'users_account' %}"><span class="fa fa-user"></span> Account</a></li>
-                <li><a href="{% url 'users_logout' %}"><span class="fa fa-sign-out"></span> Logout</a></li>
+                <li><a href="{% url 'account_logout' %}"><span class="fa fa-sign-out"></span> Logout</a></li>
                 {% else %}
-                <li><a href="{% url 'users_register' %}"><span class="glyphicon glyphicon-list-alt"></span> Register</a></li>
-                <li><a href="{% url 'users_login' %}"><span class="fa fa-sign-in"></span> Login</a></li>
+                <li><a href="{% url 'account_signup' %}"><span class="glyphicon glyphicon-list-alt"></span> Register</a></li>
+                <li><a href="{% url 'account_login' %}"><span class="fa fa-sign-in"></span> Login</a></li>
                 {% endif %}
             </ul>
         </div>
@@ -55,7 +55,7 @@
     </nav>
 
     <div class="container">
-        {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
+{% comment %}        {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}{% endcomment %}
         {% block content %}(no content){% endblock %}
     </div>
 
@@ -71,3 +71,5 @@
         </div>
     </div>
 {% endblock %}
+
+{% block bootstrap3_extra_script %}{% endblock %}

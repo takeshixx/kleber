@@ -27,8 +27,9 @@ api_router.register(r'files', api_views.FileViewSet, 'files')
 api_router.register(r'uploads', api_views.UploadViewSet, 'uploads')
 
 urlpatterns = [
+    url(r'^accounts/', include('allauth.urls')),
     url(r'^api/', include(api_router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^', include('web.urls')),
     url(r'^admin/', admin.site.urls),
+    url(r'^', include('web.urls')),
 ]
