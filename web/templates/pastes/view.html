@@ -79,6 +79,12 @@
         <a role="button" class="btn btn-default" href="/{{ paste.shortcut }}/" data-toggle="tooltip" data-placement="bottom" title="Display raw paste content">Raw</a>
         <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#upload_info">Info</button>
         <a role="button" class="btn btn-default" href="/uploads/new/{{ paste.shortcut }}" data-toggle="tooltip" data-placement="bottom" title="Upload content as new paste">Repaste</a>
+    {% if paste.owner == user %}
+    </div>
+    <div class="btn-group upload-view-menu" role="group">
+        {% url 'delete' shortcut=paste.shortcut as paste_url_delete %}
+        {% bootstrap_button "Delete" href=paste_url_delete button_class="btn-danger" %}
+    {% endif %}
     </div>
 </div>
 
@@ -89,7 +95,7 @@
         </div>
         <table class="table">
             <tbody>
-                <tr><td><b>Shortcut:</b></td><td>{{ paste.shortcut }}{% if paste.secure_shortcut %} <span class="label label-default">secure</span>{% endif %}</td></tr>
+                <tr><td><b>Shortcut:</b></td><td>{{ paste.shortcut }}{% if paste.secure_shortcut %} <span class="label label-info">Secure</span>{% endif %}</td></tr>
                 <tr><td><b>Mimetype:</b></td><td>{{ paste.mimetype }}</td></tr>
             {% if paste.mimetype_long and paste.mimetype_long != paste.mimetype %}
                 <tr><td><b>Mimetype Long:</b></td><td>{{ paste.mimetype_long }}</td></tr>
@@ -105,6 +111,9 @@
                 {% endif %}
                 {% if paste.clean_checksum and paste.checksum != paste.clean_checksum %}
                     <tr><td><b>Checksum clean (SHA256):</b></td><td>{{ paste.clean_checksum }}</td></tr>
+                {% endif %}
+                {% if paste.remove_meta_message %}
+                    <tr><td><b>Metadata Message:</b></td><td>{{ paste.remove_meta_message }}</td></tr>
                 {% endif %}
                 {% if paste.metadata %}
                     <tr><td><b>Metadata:</b></td><td>
@@ -129,7 +138,10 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">
-        <b>{% if paste.name %}{{ paste.name }}{% else %}{{ paste.shortcut }}{% endif %}{% if paste.is_encrypted %} <span class="label label-success">encrypted</span>{% endif %}</b>
+        <b>{% if paste.name %}{{ paste.name }}{% else %}{{ paste.shortcut }}{% endif %}
+                {% if paste.is_encrypted %} <span class="label label-success">encrypted</span>
+                {% elif paste.is_file and paste.metadata %} <span class="label label-warning">Metadata</span>
+                {% endif %}</b>
         <ul class="list-inline pull-right">
             <li>Mimetype: <b>{{ paste.mimetype }}</b></li>
             <li>Size: <b>{{ paste.size|filesizeformat }}</b></li>

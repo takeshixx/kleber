@@ -54,19 +54,19 @@
     </script>
 {% endblock %}
 
-{% block title %}{{ block.super }} - Create New Paste{% endblock %}
+{% block title %}{{ block.super }} - Upload{% endblock %}
 
 {% block content %}
 <div class="panel panel-default">
     <div class="panel-heading">
-        <b>Create new paste</b>
+        <b>Create New Paste</b>
     </div>
     <div class="panel-body">
         <form action="{% url 'upload' %}" method="post" accept-charset="utf-8" class="form" onsubmit="return create_paste()">
             {% bootstrap_form form %}
             {% csrf_token %}
             {% buttons %}
-            <button type="submit" class="btn btn-primary">Create paste</button>
+            <button type="submit" class="btn btn-primary">Create Paste</button>
             {% endbuttons %}
         </form>
     </div>
@@ -74,14 +74,14 @@
 {% if user.is_authenticated %}
     <div class="panel panel-default">
     <div class="panel-heading">
-        <b>Upload a file</b>
+        <b>Upload a File</b>
     </div>
     <div class="panel-body">
         <form action="{% url 'upload' %}" method="post" accep-charset="utf-8" class="form" enctype="multipart/form-data">
             {% bootstrap_form upload_form %}
             {% csrf_token %}
             {% buttons %}
-            <button type="submit" class="btn btn-primary">Upload file</button>
+            <button type="submit" class="btn btn-primary">Upload File</button>
             {% endbuttons %}
         </form>
     </div>

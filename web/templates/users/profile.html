@@ -23,10 +23,10 @@
             <div class="panel-footer">
                 <div class="btn-toolbar" role="toolbar">
                     {% url 'account_email' as userchange_url %}
-                    {% bootstrap_button "Change email address" button_class="btn btn-primary" href=userchange_url %}
+                    {% bootstrap_button "Change E-mail Address" button_class="btn btn-primary" href=userchange_url %}
                     {% url 'account_change_password' as pwchange_url %}
-                    {% bootstrap_button "Change password" button_class="btn btn-primary" href=pwchange_url %}
-                    {% bootstrap_button "Delete account" button_class="btn btn-danger" href="#" %}
+                    {% bootstrap_button "Change Password" button_class="btn btn-primary" href=pwchange_url %}
+                    {% bootstrap_button "Delete Account" button_class="btn btn-danger" href="#" %}
                 </div>
             </div>
         </div>
@@ -35,30 +35,38 @@
 <div class="row">
     <div class="col-xs-6 col-xs-offset-3">
         <div class="panel panel-info">
-            <div class="panel-heading"><b>API Keys</b></div>
+            <div class="panel-heading"><b>Authentication Token</b></div>
             <table class="table">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Key</th>
+                        <th>Token</th>
                         <th>Creation Date</th>
-                        <th>Actions</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% if tokens %}
+                    {% for token in tokens %}
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{{ token.key }}</td>
+                        <td>{{ token.created }}</td>
+                        <td>
+                        {% url 'users_token_delete' token=token.key as token_url_delete %}
+                        {% bootstrap_button "Delete" href=token_url_delete button_class="btn-danger btn-xs" %}
+                        </td>
                     </tr>
+                    {% endfor %}
+                    {% endif %}
                 </tbody>
             </table>
+            {% if not tokens %}
             <div class="panel-footer">
                 <div class="btn-toolbar" role="toolbar">
-                    {% bootstrap_button "Create API key" button_class="btn-primary" href="#" %}
+                    {% url 'users_token_create' as token_url_create %}
+                    {% bootstrap_button "Create Authentication Token" button_class="btn-primary" href=token_url_create %}
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -88,7 +96,7 @@
             </table>
             <div class="panel-footer">
                 <div class="btn-toolbar" role="toolbar">
-                    {% bootstrap_button "Create invite code" button_class="btn-primary" href="#" %}
+                    {% bootstrap_button "Create Invitation Code" button_class="btn-primary" href="#" %}
                 </div>
             </div>
         </div>
