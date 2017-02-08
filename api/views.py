@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from .serializers import UserSerializer, GroupSerializer, PasteSerializer, FileSerializer, UploadSerializer
 
 from web.models import KleberInput, Paste, File
@@ -18,6 +19,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 class PasteViewSet(viewsets.ModelViewSet):
     serializer_class = PasteSerializer
+    authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
 
     def get_queryset(self):
         return Paste.objects.filter(owner=self.request.user)
