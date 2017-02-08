@@ -9,7 +9,7 @@ def remove_metadata(file_path,):
         if message == 'Unchanged':
             return True, 'No metadata found, file unchanged'
         if 'Unknown file type' in message:
-            return False, 'File type not supported'
+            return False, 'File type not supported for metadata removal'
         return False, 'File unchanged'
 
 
