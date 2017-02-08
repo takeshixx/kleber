@@ -90,4 +90,4 @@ class UploadFileForm(forms.ModelForm):
     def clean_uploaded_file(self):
         if self.cleaned_data['uploaded_file'].size > MAX_UPLOAD_SIZE:
             raise forms.ValidationError(_('File uploads must be %s or less.' % filesizeformat(MAX_UPLOAD_SIZE)))
-        return self.uploaded_file
+        return self.cleaned_data['uploaded_file']
