@@ -5,6 +5,7 @@ import pygments.formatters
 
 from .models import KleberInput
 from .forms import CreatePasteForm, UploadFileForm
+from rest_framework.authtoken.models import Token
 from mal.shortcuts import remove_metadata, retrieve_metadata
 
 
@@ -131,7 +132,26 @@ def delete(request, shortcut):
 
 
 def user_account(request):
-    return render(request, 'users/profile.html')
+    tokens = Token.objects.filter(user=request.user)
+    return render(request, 'users/profile.html', {'tokens': tokens})
+
+
+def user_token_create(request):
+    if request.user.is_authenticated:
+        token = Token(user=request.user)
+        token.save()
+        return redirect('users_account')
+    else:
+        return redirect('account_login')
+
+
+def user_token_delete(request, token):
+    if request.user.is_authenticated:
+        token = get_object_or_404(Token, user=request.user, key=token)
+        token.delete()
+        return redirect('users_account')
+    else:
+        return redirect('account_login')
 
 
 def about(request):
