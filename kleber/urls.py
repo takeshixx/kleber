@@ -19,9 +19,7 @@ from django.contrib import admin
 from rest_framework import routers
 from api import views as api_views
 
-api_router = routers.DefaultRouter()
-api_router.register(r'users', api_views.UserViewSet)
-api_router.register(r'groups', api_views.GroupViewSet)
+api_router = routers.SimpleRouter()
 api_router.register(r'pastes', api_views.PasteViewSet, 'pastes')
 api_router.register(r'files', api_views.FileViewSet, 'files')
 api_router.register(r'uploads', api_views.UploadViewSet, 'uploads')

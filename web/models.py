@@ -1,9 +1,9 @@
 import datetime
 import hashlib
 import random
+import secrets
 import magic
 import mimetypes
-import string
 import pygments
 import pygments.lexers
 import pygments.formatters
@@ -12,8 +12,10 @@ import pygments.styles
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User, Group, Permission
-from django.db.models.signals import post_delete
+from django.contrib.contenttypes.models import ContentType
+from django.db.models.signals import post_delete, post_migrate
 from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 
 # TODO: properly link to user objects
@@ -43,6 +45,9 @@ class KleberInput(models.Model):
     is_file = models.BooleanField(default=False)
     secure_shortcut = models.BooleanField(default=False)
     lexer = models.TextField()
+    password = models.CharField(max_length=100,
+                                null=True,
+                                blank=True)
 
     def __unicode__(self):
         return self.shortcut
@@ -80,6 +85,26 @@ class KleberInput(models.Model):
         else:
             return False
 
+    def set_password(self, password):
+        # if not password:
+        #     password = secrets.token_urlsafe(16)
+        # if not isinstance(password, bytes):
+        #     password = password.encode()
+        # h = hashlib.sha256(password)
+        # self.password = h.hexdigest()
+        # return password
+        self.password = password
+
+    def check_password(self, password):
+        # if password and self.password:
+        #     if not isinstance(password, bytes):
+        #         password = password.encode()
+        #     h = hashlib.sha256(password)
+        #     if h.hexdigest() == self.password:
+        #         return True
+        # return False
+        return True if password == self.password else False
+
     def set_shortcut(self, shortcut=None):
         # TODO: do we still need these? maybe they need to be updated
         KLEBER_SHORTURL_BAD_WORDS = [
@@ -104,8 +129,7 @@ class KleberInput(models.Model):
                 min = 3
                 max = 9
             while True:
-                url = ''.join(random.choice(
-                    string.ascii_letters + string.digits) for _ in range(random.randrange(min, max)))
+                url = secrets.token_urlsafe(random.randrange(min, max))
                 if not Paste.objects.filter(shortcut=url).first() and not url in KLEBER_SHORTURL_BAD_WORDS:
                     self.shortcut = url
                     break
@@ -123,8 +147,11 @@ class KleberInput(models.Model):
                 except pygments.util.ClassNotFound:
                     pass
             if not _lexer:
+                content = self.get_content()
+                if isinstance(content, bytes):
+                    content = content.decode()
                 try:
-                    _lexer = pygments.lexers.guess_lexer(self.get_content())
+                    _lexer = pygments.lexers.guess_lexer(content)
                 except pygments.util.ClassNotFound:
                     pass
             if _lexer.name == 'Text only':
@@ -206,6 +233,9 @@ class File(KleberInput):
     checksum = models.TextField()
     clean_checksum = models.TextField()
 
+    #class Meta:
+    #    permissions = (('read_file', 'Can read File'),)
+
     def __repr__(self):
         return '<File Shortcut: {} Name: {} '.format(self.shortcut,
                                                      self.name.encode('utf-8'))
@@ -216,9 +246,9 @@ class File(KleberInput):
         if not self.name:
             self.name = self.uploaded_file.name
         super(File, self).save(force_insert=force_insert,
-                                force_update=force_update,
-                                using=using,
-                                update_fields=update_fields)
+                               force_update=force_update,
+                               using=using,
+                               update_fields=update_fields)
 
 
     def calc_checksum_from_file(self, filename=None, blocksize=65536):
@@ -260,9 +290,82 @@ class File(KleberInput):
             return 'data'
 
 
+class Invite(models.Model):
+    code = models.CharField(max_length=16)
+    owner = models.ForeignKey(User,
+                              null=True,
+                              related_name='owner_user')
+    receiver = models.ForeignKey(User,
+                                 null=True,
+                                 related_name='receiver_user')
+    created = models.DateTimeField(auto_now_add=True,
+                                   blank=True)
+    lifetime = models.DateTimeField(blank=True,
+                                    null=True)
+    used = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return self.code
+
+    def __str__(self):
+        return self.code
+
+    def save(self, force_insert=False, force_update=False,
+             using=None, update_fields=None):
+        self.generate_code()
+        super(Invite, self).save(force_insert=force_insert,
+                                 force_update=force_update,
+                                 using=using,
+                                 update_fields=update_fields)
+
+    def generate_code(self):
+        self.code = secrets.token_hex(16)
+
+
 @receiver(post_delete, sender=File)
 def file_post_delete_handler(sender, **kwargs):
     """Make sure files will be deleted from the file system."""
     file = kwargs['instance']
     storage, path = file.uploaded_file.storage, file.uploaded_file.path
     storage.delete(path)
+
+
+@receiver(post_migrate)
+def init_groups(sender, **kwargs):
+    file_uploads_group, created = Group.objects.get_or_create(
+        name='Can upload files')
+    file_ct = ContentType.objects.get_for_model(File)
+    file_add_perm, created = Permission.objects.get_or_create(
+        codename='add_file',
+        name='Can add file',
+        content_type=file_ct)
+    file_change_perm, created = Permission.objects.get_or_create(
+        codename='change_file',
+        name='Can change file',
+        content_type=file_ct)
+    file_delete_perm, created = Permission.objects.get_or_create(
+        codename='delete_file',
+        name='Can delete file',
+        content_type=file_ct)
+    file_uploads_group.permissions.add(file_add_perm)
+    file_uploads_group.permissions.add(file_change_perm)
+    file_uploads_group.permissions.add(file_delete_perm)
+
+    invite_group, created = Group.objects.get_or_create(
+        name='Can invite users')
+    invite_ct = ContentType.objects.get_for_model(File)
+    invite_add_perm, created = Permission.objects.get_or_create(
+        codename='add_invite',
+        name='Can add invite',
+        content_type=invite_ct)
+    invite_change_perm, created = Permission.objects.get_or_create(
+        codename='change_invite',
+        name='Can change invite',
+        content_type=invite_ct)
+    invite_delete_perm, created = Permission.objects.get_or_create(
+        codename='delete_invite',
+        name='Can delete invite',
+        content_type=invite_ct)
+    invite_group.permissions.add(invite_add_perm)
+    invite_group.permissions.add(invite_change_perm)
+    invite_group.permissions.add(invite_delete_perm)

@@ -2,8 +2,9 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.template.defaultfilters import filesizeformat
+from django.contrib.auth.models import Group
 
-from .models import Paste, File
+from .models import Paste, File, Invite
 
 LIFETIMES = [(0, 'Never expires'),
              (1, 'Burn after reading'),
@@ -70,6 +71,15 @@ class UploadFileForm(forms.ModelForm):
                                     help_text=_('Longer shortcuts will be harder to guess. So with '
                                                 'this option it will be harder to find this upload '
                                                 'by guessing URLs.'))
+    password_protect = forms.BooleanField(required=False,
+                                          label=_('Password protect'),
+                                          help_text=_('Password protected uploads will only be accessible '
+                                                      'for users that have access to the password.'),
+                                          widget=forms.CheckboxInput(attrs={'onclick': 'return protect()'}))
+    password = forms.CharField(required=False,
+                               label='',
+                               max_length=50,
+                               widget=forms.TextInput(attrs={'class': 'hidden'}))
 
     class Meta:
         model = File
@@ -91,3 +101,36 @@ class UploadFileForm(forms.ModelForm):
         if self.cleaned_data['uploaded_file'].size > MAX_UPLOAD_SIZE:
             raise forms.ValidationError(_('File uploads must be %s or less.' % filesizeformat(MAX_UPLOAD_SIZE)))
         return self.cleaned_data['uploaded_file']
+
+
+class SignupForm(forms.Form):
+    username = forms.CharField(max_length=30,
+                               label='Username')
+    email = forms.EmailField(label='Email Address')
+    invitaion_code = forms.CharField(max_length=32,
+                                     label='Invitation Code',
+                                     required=False)
+
+    def clean_invitation_code(self):
+        code = self.cleaned_data['invitation_code']
+        invite = Invite.objects.filter(code=code).first()
+        if invite:
+            return code
+        else:
+            return None
+
+    def signup(self, request, user):
+        user.username = self.cleaned_data['username']
+        user.email = self.cleaned_data['email']
+        user.set_password(self.cleaned_data['password1'])
+        user.save()
+        invite_code = self.cleaned_data['invitaion_code']
+        if invite_code:
+            invite = Invite.objects.filter(code=invite_code,
+                                           used=False).first()
+            if invite and isinstance(invite, Invite):
+                group = Group.objects.get(name='Can upload files')
+                group.user_set.add(user)
+                invite.receiver = user
+                invite.used = True
+                invite.save()

@@ -32,8 +32,7 @@
             margin: 0 auto;
             max-width: 100%;
             padding: 5px;
-            background: #fff;
-            border: 1px solid #d0d0d0;
+            background: #eee;
             border-radius: 3px;
             box-shadow: 0 1px 5px rgba(127,127,127,0.5);
             -webkit-box-shadow: 0 1px 5px rgba(127,127,127,0.5);}
@@ -76,7 +75,7 @@
 {% block content %}
 <div class="text-center">
     <div class="btn-group upload-view-menu" role="group">
-        <a role="button" class="btn btn-default" href="/{{ paste.shortcut }}/" data-toggle="tooltip" data-placement="bottom" title="Display raw paste content">Raw</a>
+        <a role="button" class="btn btn-default" href="/{{ paste.shortcut }}/{% if password %}?password={{ password }}{% endif %}" data-toggle="tooltip" data-placement="bottom" title="Display raw paste content">Raw</a>
         <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#upload_info">Info</button>
         <a role="button" class="btn btn-default" href="/uploads/new/{{ paste.shortcut }}" data-toggle="tooltip" data-placement="bottom" title="Upload content as new paste">Repaste</a>
     {% if paste.owner == user %}
@@ -139,9 +138,10 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <b>{% if paste.name %}{{ paste.name }}{% else %}{{ paste.shortcut }}{% endif %}
-                {% if paste.is_encrypted %} <span class="label label-success">encrypted</span>
-                {% elif paste.is_file and paste.metadata %} <span class="label label-warning">Metadata</span>
-                {% endif %}</b>
+                {% if paste.is_encrypted %} <span class="label label-success">encrypted</span>{% endif %}
+                {% if paste.is_file and paste.metadata %} <span class="label label-warning">Metadata</span>{% endif %}
+                {% if paste.password %} <span class="label label-success">Password</span>{% endif %}
+                </b>
         <ul class="list-inline pull-right">
             <li>Mimetype: <b>{{ paste.mimetype }}</b></li>
             <li>Size: <b>{{ paste.size|filesizeformat }}</b></li>
@@ -158,7 +158,7 @@
                 {% endif %}
             {% elif paste.mimetype and paste.mimetype|slice:":5" == 'image' %}
                 <div class="text-center">
-                    <img class="image-preview" src="{% url 'uploads_plain' shortcut=paste.shortcut %}" />
+                    <img class="image-preview" src="{% url 'uploads_plain' shortcut=paste.shortcut %}{% if password %}?password={{ password }}{% endif %}" />
                 </div>
             {% else %}
                 <div class="text-center">

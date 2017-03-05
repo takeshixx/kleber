@@ -70,36 +70,50 @@
         </div>
     </div>
 </div>
+{% if user.is_authenticated and perms.web.add_invite %}
 <div class="row">
     <div class="col-xs-6 col-xs-offset-3">
         <div class="panel panel-warning">
-            <div class="panel-heading"><b>Invite Codes</b></div>
+            <div class="panel-heading"><b>Invitation Codes</b></div>
             <table class="table">
                 <thead>
                     <tr>
-                        <th>#</th>
                         <th>Code</th>
                         <th>Receiver</th>
                         <th>Creation Date</th>
-                        <th>Actions</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% if invites %}
+                    {% for invite in invites %}
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{{ invite.code }}</td>
+                        <td>{% if invite.receiver %}
+                            {{ invite.receiver.email }}
+                        {% else %}
+                            -
+                        {% endif %}</td>
+                        <td>{{ invite.created }}</td>
+                        <td>
+                        {% if not invite.used %}
+                        {% url 'users_invite_delete' code=invite.code as invite_url_delete %}
+                        {% bootstrap_button "Delete" href=invite_url_delete button_class="btn-danger btn-xs" %}
+                        {% endif %}
+                        </td>
                     </tr>
+                    {% endfor %}
+                    {% endif %}
                 </tbody>
             </table>
             <div class="panel-footer">
                 <div class="btn-toolbar" role="toolbar">
-                    {% bootstrap_button "Create Invitation Code" button_class="btn-primary" href="#" %}
+                    {% url 'users_invite_create' as invite_url_create %}
+                    {% bootstrap_button "Create Invitation Code" button_class="btn-primary" href=invite_url_create %}
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}

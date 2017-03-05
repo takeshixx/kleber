@@ -5,7 +5,6 @@
     {{ block.super }}
     <script>
         function create_paste() {
-            console.log('hit it!');
             var encrypt = document.getElementById('id_is_encrypted');
             var secure_url = document.getElementById('id_secure_url');
             var paste_content = document.getElementById('id_content').value;
@@ -51,6 +50,14 @@
                 });
             return false;
         }
+        function protect() {
+            console.log("test");
+            var random_bytes = sjcl.random.randomWords(4);
+            var random_password = sjcl.codec.hex.fromBits(random_bytes);
+            var password = document.getElementById('id_password');
+            password.value = random_password;
+            password.classList.toggle('hidden');
+        }
     </script>
 {% endblock %}
 
@@ -71,7 +78,7 @@
         </form>
     </div>
 </div>
-{% if user.is_authenticated %}
+{% if user.is_authenticated and perms.web.add_file %}
     <div class="panel panel-default">
     <div class="panel-heading">
         <b>Upload a File</b>

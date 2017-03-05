@@ -149,11 +149,14 @@ APPEND_SLASH = False
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAdminUser',
-    ],
+        'rest_framework.permissions.IsAdminUser'],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-    ],
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication'],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        # For a production setup, remove the browsable API
+        'rest_framework.renderers.BrowsableAPIRenderer'],
     'PAGE_SIZE': 10
 }
 
@@ -164,5 +167,6 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 #ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 ACCOUNT_PASSWORD_MIN_LENGTH = 8
 ACCOUNT_USERNAME_MIN_LENGTH = 3
+ACCOUNT_SIGNUP_FORM_CLASS = 'web.forms.SignupForm'
 
 LOGIN_REDIRECT_URL = '/'

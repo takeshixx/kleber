@@ -13,10 +13,10 @@
 <br>
 <h2 id="metadata">Metadata</h2>
 <p>The following description was stolen from <a href="https://en.wikipedia.org/wiki/Metadata">Wikipedia</a>:</p>
-<div class="well">
-    <p>Metadata is "data about data". Two types of metadata exist: structural metadata and descriptive metadata. Structural metadata is data about the containers of data. Descriptive metadata uses individual instances of application data or the data content.</p>
-    <p>Metadata (metacontent) is defined as the data providing information about one or more aspects of the data, such as:
-    <p>
+<blockquote class="blockquote">
+    <p class="mb-0">Metadata is "data about data". Two types of metadata exist: structural metadata and descriptive metadata. Structural metadata is data about the containers of data. Descriptive metadata uses individual instances of application data or the data content.</p>
+    <p class="mb-0">Metadata (metacontent) is defined as the data providing information about one or more aspects of the data, such as:
+    <p class="mb-0">
     <ul>
         <li>Means of creation of the data</li>
         <li>Purpose of the data</li>
@@ -25,8 +25,8 @@
         <li>Location on a computer network where the data was created</li>
         <li>Standards used</li>
     </ul>
-    <p>For example, a digital image may include metadata that describe how large the picture is, the color depth, the image resolution, when the image was created, and other data. A text document's metadata may contain information about how long the document is, who the author is, when the document was written, and a short summary of the document.</p>
-</div>
+    <p class="mb-0">For example, a digital image may include metadata that describe how large the picture is, the color depth, the image resolution, when the image was created, and other data. A text document's metadata may contain information about how long the document is, who the author is, when the document was written, and a short summary of the document.</p>
+</blockquote>
 <p>Here are some resources about metadata:</p>
 <ul>
     <li><a href="http://www.metadataworkinggroup.com/pdf/mwg_guidance.pdf">Guidelines for Handling Image Metadata (MWG)</a></li>
@@ -42,13 +42,7 @@
 <p>Because the key never hits the wire, encryption of the paste only works with the URL that will be created in the JavaScript upon paste creation. You can share this link with everyone that should be able to read the paste content. Everyone else who just knows the ID of the paste, will only receive the encrypted content. This also applies to Kleber itself.
 <div class="alert alert-danger" role="alert">Keep in mind that this feature will not provide 100% security!</div>
 <br>
-<h2 id="hidden-service">Hidden Service</h2>
-<p>Kleber is available as a hidden service from within the Tor network. This allows to share pastes and files fully anonymous. If you are really concerned about your privacy, you should use Kleber via the hidden service.</p>
-<p>You should keep in mind that even if you use Kleber via TOR, you may be identified by personal information that you or your client (most likely your browser) leaks. Always be careful about the information you disclose to services you are communicating with.</p>
-<p>Please read the official <a href="https://www.torproject.org/docs/faq.html.en#AttacksOnOnionRouting">TOR FAQ</a> carefully and follow those advices.</p>
-<br>
 <h2 id="privacy">Privacy</h2>
 <p>Removing metadata from files shared to potentially untrusted parties on the Internet can enhance a user's privacy online. However, user have to keep in mind that removing metadata requires previous parsing of corresponding files. Besides parsing them, they might be modified.</p>
 <p>Unlike files, pastes are not affected by this. The backend just tries to determine mimetypes, but it won't modify pastes in any way. Parsing paste content, for e.g. pretty printing code snippets is done on the client side.</p>
-<p>If you are really concerned about your privacy, you should use the TOR hidden service.</p>
 {% endblock %}

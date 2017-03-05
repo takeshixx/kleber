@@ -61,6 +61,7 @@
                     {% else %}
                         {% if paste.is_encrypted %} <span class="label label-success">Encrypted</span>{% endif %}
                     {% endif %}
+                    {% if paste.password %} <span class="label label-success">Password</span>{% endif %}
                 </td>
                 <td>{{ paste.mimetype }}</td>
                 <td>{{ paste.size|filesizeformat }}</td>
@@ -109,7 +110,9 @@
                                 <li><b>Lexer:</b> {{ paste.lexer }}</li>
                             {% endif %}
                         {% endif %}
-
+                        {% if paste.password %}
+                            <li><b>Password:</b> <a href="/{{ paste.shortcut }}?password={{ paste.password }}">{{ paste.password }}</a></li>
+                        {% endif %}
                     </ul>
                 </td>
             </tr>

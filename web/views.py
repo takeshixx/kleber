@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import pygments.formatters
 
-from .models import KleberInput
+from .models import KleberInput, Invite
 from .forms import CreatePasteForm, UploadFileForm
 from rest_framework.authtoken.models import Token
 from mal.shortcuts import remove_metadata, retrieve_metadata
@@ -15,6 +15,7 @@ def index(request):
 
 def get_uploads(request, shortcut=None):
     if shortcut:
+        print(shortcut)
         doc = get_object_or_404(KleberInput, shortcut=shortcut)
         doc = doc.cast()
         if doc.burn_after_reading:
@@ -24,10 +25,14 @@ def get_uploads(request, shortcut=None):
         elif doc.lifetime_expired():
             doc.delete()
             raise Http404()
+        password = request.GET.get('password')
+        if doc.password and not doc.check_password(password):
+            return render(request, 'pastes/password.html', {'paste': doc})
         highlightcss = pygments.formatters.HtmlFormatter(
             style=pygments.styles.get_style_by_name('colorful')).get_style_defs('.highlight')
         return render(request, 'pastes/view.html', {'paste': doc,
-                                                    'highlightcss': highlightcss})
+                                                    'highlightcss': highlightcss,
+                                                    'password': password})
     else:
         if request.user.is_authenticated:
             uploads = KleberInput.objects.filter(owner=request.user).order_by('-created')
@@ -61,6 +66,9 @@ def uploads_plain(request, shortcut):
     elif doc.lifetime_expired():
         doc.delete()
         raise Http404()
+    password = request.GET.get('password')
+    if doc.password and not doc.check_password(password):
+        return render(request, 'pastes/password.html', {'paste': doc})
     if doc.is_file:
         mimetype = doc.mimetype or 'application/octet-stream'
         return HttpResponse(doc.uploaded_file.file.read(),
@@ -79,13 +87,18 @@ def upload(request, shortcut=None):
         paste_form = CreatePasteForm()
     upload_form = UploadFileForm()
     if request.method == 'POST':
+        password = request.POST.get('password')
         if request.user.is_authenticated and request.FILES:
+            if not request.user.has_perm('web.add_file'):
+                return HttpResponse(status=403)
             upload_form = UploadFileForm(request.POST, request.FILES)
             if upload_form.is_valid():
                 file = upload_form.save()
                 file.set_lifetime(request.POST.get('lifetime'))
                 if request.POST.get('secure_url') == 'on':
                     file.secure_shortcut = True
+                if password:
+                    file.set_password(password)
                 file.owner = request.user
                 file.checksum = file.calc_checksum_from_file()
                 remove_meta = request.POST.get('remove_meta')
@@ -105,7 +118,11 @@ def upload(request, shortcut=None):
                     file.remove_meta = False
                     file.remove_meta_message = 'Metadata stored, but not removed'
                 file.save()
-                return redirect('uploads_short', shortcut=file.shortcut)
+                response = redirect('uploads_short',
+                                    shortcut=file.shortcut)
+                if password:
+                    response['Location'] += '?password=' + password
+                return response
         else:
             paste_form = CreatePasteForm(request.POST)
             if paste_form.is_valid():
@@ -115,8 +132,14 @@ def upload(request, shortcut=None):
                     paste.secure_shortcut = True
                 if request.user.is_authenticated:
                     paste.owner = request.user
+                if password:
+                    paste.set_password(password)
                 paste.save()
-                return redirect('uploads_short', shortcut=paste.shortcut)
+                response = redirect('uploads_short',
+                                    shortcut=paste.shortcut)
+                if password:
+                    response['Location'] += '?password=' + password
+                return response
     return render(request, 'pastes/create.html', {'form': paste_form,
                                                   'upload_form': upload_form})
 
@@ -133,7 +156,9 @@ def delete(request, shortcut):
 
 def user_account(request):
     tokens = Token.objects.filter(user=request.user)
-    return render(request, 'users/profile.html', {'tokens': tokens})
+    invites = Invite.objects.filter(owner=request.user)
+    return render(request, 'users/profile.html', {'tokens': tokens,
+                                                  'invites': invites})
 
 
 def user_token_create(request):
@@ -153,6 +178,26 @@ def user_token_delete(request, token):
     else:
         return redirect('account_login')
 
+def user_invite_create(request):
+    if request.user.is_authenticated:
+        if not request.user.has_perm('web.add_invite'):
+            return HttpResponse(status=403)
+        invite = Invite()
+        invite.owner = request.user
+        invite.save()
+        return redirect('users_account')
+    else:
+        return redirect('account_login')
+
+def user_invite_delete(request, code):
+    if request.user.is_authenticated:
+        if not request.user.has_perm('web.delete_invite'):
+            return HttpResponse(status=403)
+        invite = get_object_or_404(Invite, code=code)
+        invite.delete()
+        return redirect('users_account')
+    else:
+        return redirect('account_login')
 
 def about(request):
     return render(request, 'about.html')

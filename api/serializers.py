@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User, Group
 from django.utils import timezone
 from rest_framework import serializers
 
@@ -12,28 +11,7 @@ LIFETIMES = [(0, 'Never expires'),
              (604800, 'Expires after 1 week')]
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ('url',
-                  'username',
-                  'email',
-                  'groups')
-
-
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Group
-        fields = ('url',
-                  'name')
-
-
-class PasteSerializer(serializers.HyperlinkedModelSerializer):
-    shortcut = serializers.ReadOnlyField()
-    size = serializers.ReadOnlyField()
-    mimetype = serializers.ReadOnlyField()
-    mimetype_long = serializers.ReadOnlyField()
-    created = serializers.ReadOnlyField()
+class PasteSerializer(serializers.ModelSerializer):
     lifetime = serializers.ChoiceField(choices=LIFETIMES)
 
     class Meta:
@@ -48,6 +26,11 @@ class PasteSerializer(serializers.HyperlinkedModelSerializer):
                   'shortcut',
                   'secure_shortcut',
                   'is_encrypted')
+        read_only_fields = ('shortcut',
+                            'size',
+                            'mimetype',
+                            'mimetype_long',
+                            'created')
 
     def validate_lifetime(self, lifetime):
         try:
@@ -60,15 +43,7 @@ class PasteSerializer(serializers.HyperlinkedModelSerializer):
         return None
 
 
-class FileSerializer(serializers.HyperlinkedModelSerializer):
-    shortcut = serializers.ReadOnlyField()
-    size = serializers.ReadOnlyField()
-    mimetype = serializers.ReadOnlyField()
-    mimetype_long = serializers.ReadOnlyField()
-    created = serializers.ReadOnlyField()
-    checksum = serializers.ReadOnlyField()
-    clean_checmsum = serializers.ReadOnlyField()
-    metadata = serializers.ReadOnlyField()
+class FileSerializer(serializers.ModelSerializer):
     lifetime = serializers.ChoiceField(choices=LIFETIMES)
 
     class Meta:
@@ -84,7 +59,18 @@ class FileSerializer(serializers.HyperlinkedModelSerializer):
                   'secure_shortcut',
                   'checksum',
                   'clean_checksum',
-                  'metadata')
+                  'metadata',
+                  'password')
+        read_only_fields = ('shortcut',
+                            'size',
+                            'mimetype',
+                            'mimetype_long',
+                            'created',
+                            'checksum',
+                            'clean_checksum',
+                            'metadata')
+        extra_kwargs = {'password': {'write_only': True},
+                        'uploaded_file': {'write_only': True}}
 
     def validate_lifetime(self, lifetime):
         try:
@@ -100,7 +86,12 @@ class FileSerializer(serializers.HyperlinkedModelSerializer):
 class UploadSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = KleberInput
-        fields = ('shortcut',
-                  'name',
+        fields = ('name',
+                  'size',
+                  'mimetype',
+                  'mimetype_long',
+                  'created',
                   'lifetime',
+                  'shortcut',
+                  'secure_shortcut',
                   'is_file')
