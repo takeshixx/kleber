@@ -13,15 +13,9 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
-from django.db.models.signals import post_delete, post_migrate
+from django.db.models.signals import post_delete, post_migrate, pre_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
-
-
-# TODO: properly link to user objects
-class UserConfig(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    theme = models.TextField(default='default')
 
 
 class KleberInput(models.Model):
@@ -66,6 +60,23 @@ class KleberInput(models.Model):
                                       using=using,
                                       update_fields=update_fields)
 
+    def check_quota(self):
+        current_quota = KleberInput.objects.filter(owner=self.owner)\
+                                           .aggregate(models.Sum('size'))
+        total_quota = current_quota.get('size__sum') + self.size
+        if self.owner.has_perm('web.quota_unlimited_file'):
+            return True
+        elif self.owner.has_perm('web.quota_4g_file'):
+            if total_quota >= 4294967296:
+                return False
+        elif self.owner.has_perm('web.quota_1g_file'):
+            if total_quota >= 1073741824:
+                return False
+        else:
+            if total_quota >= 536870912:
+                return
+        return True
+
     def set_lifetime(self, lifetime):
         try:
             lifetime = int(lifetime)
@@ -86,23 +97,9 @@ class KleberInput(models.Model):
             return False
 
     def set_password(self, password):
-        # if not password:
-        #     password = secrets.token_urlsafe(16)
-        # if not isinstance(password, bytes):
-        #     password = password.encode()
-        # h = hashlib.sha256(password)
-        # self.password = h.hexdigest()
-        # return password
         self.password = password
 
     def check_password(self, password):
-        # if password and self.password:
-        #     if not isinstance(password, bytes):
-        #         password = password.encode()
-        #     h = hashlib.sha256(password)
-        #     if h.hexdigest() == self.password:
-        #         return True
-        # return False
         return True if password == self.password else False
 
     def set_shortcut(self, shortcut=None):
@@ -233,9 +230,6 @@ class File(KleberInput):
     checksum = models.TextField()
     clean_checksum = models.TextField()
 
-    #class Meta:
-    #    permissions = (('read_file', 'Can read File'),)
-
     def __repr__(self):
         return '<File Shortcut: {} Name: {} '.format(self.shortcut,
                                                      self.name.encode('utf-8'))
@@ -250,10 +244,8 @@ class File(KleberInput):
                                using=using,
                                update_fields=update_fields)
 
-
     def calc_checksum_from_file(self, filename=None, blocksize=65536):
         filename = filename or self.uploaded_file.url
-        print(filename)
         hasher = hashlib.sha256()
         with open(filename, 'rb') as f:
             b = f.read(blocksize)
@@ -369,3 +361,30 @@ def init_groups(sender, **kwargs):
     invite_group.permissions.add(invite_add_perm)
     invite_group.permissions.add(invite_change_perm)
     invite_group.permissions.add(invite_delete_perm)
+
+    quota_1g_group, created = Group.objects.get_or_create(
+        name='Can upload 1G')
+    file_ct = ContentType.objects.get_for_model(KleberInput)
+    quota_1g_perm, created = Permission.objects.get_or_create(
+        codename='quota_1g_file',
+        name='Can upload 1G',
+        content_type=file_ct)
+    quota_1g_group.permissions.add(quota_1g_perm)
+
+    quota_4g_group, created = Group.objects.get_or_create(
+        name='Can upload 4G')
+    file_ct = ContentType.objects.get_for_model(KleberInput)
+    quota_4g_perm, created = Permission.objects.get_or_create(
+        codename='quota_4g_file',
+        name='Can upload 4G',
+        content_type=file_ct)
+    quota_4g_group.permissions.add(quota_4g_perm)
+
+    quota_unlimited_group, created = Group.objects.get_or_create(
+        name='Can upload unlimited')
+    file_ct = ContentType.objects.get_for_model(KleberInput)
+    quota_unlimited_perm, created = Permission.objects.get_or_create(
+        codename='quota_unlimited_file',
+        name='Can upload unlimited',
+        content_type=file_ct)
+    quota_unlimited_group.permissions.add(quota_unlimited_perm)

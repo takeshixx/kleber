@@ -21,7 +21,7 @@
     <div class="panel-heading">
         <b>Upload History</b>
         <ul class="list-inline pull-right">
-            <li>Quota: <b>-</b> / <b>-</b></li>
+            <li>Quota: <b>{% if quota %}{{ quota|filesizeformat }}{% else %}-{% endif %}</b> / <b>{% if perms.web.quota_1g_file %}1G{% elif perms.web.quota_4g_file %}4G{% elif perms.web.quota_unlimited_file %}-{% else %}512M{% endif %}</b></li>
             <li>Count: <b>{{ pastes|length }}</b></li>
             <li>
                 <div class="btn-group">

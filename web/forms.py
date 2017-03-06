@@ -13,7 +13,7 @@ LIFETIMES = [(0, 'Never expires'),
              (43200, 'Expires after 12 hours'),
              (604800, 'Expires after 1 week')]
 
-MAX_UPLOAD_SIZE = 214958080 # 250 MB
+MAX_UPLOAD_SIZE = 262144000 # 250 MB
 
 
 class CreatePasteForm(forms.ModelForm):
@@ -99,7 +99,8 @@ class UploadFileForm(forms.ModelForm):
 
     def clean_uploaded_file(self):
         if self.cleaned_data['uploaded_file'].size > MAX_UPLOAD_SIZE:
-            raise forms.ValidationError(_('File uploads must be %s or less.' % filesizeformat(MAX_UPLOAD_SIZE)))
+            raise forms.ValidationError(_('File uploads must be %s or less.' %
+                                          filesizeformat(MAX_UPLOAD_SIZE)))
         return self.cleaned_data['uploaded_file']
 
 

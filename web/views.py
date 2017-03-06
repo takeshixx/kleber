@@ -1,6 +1,7 @@
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db import models
 import pygments.formatters
 
 from .models import KleberInput, Invite
@@ -15,7 +16,6 @@ def index(request):
 
 def get_uploads(request, shortcut=None):
     if shortcut:
-        print(shortcut)
         doc = get_object_or_404(KleberInput, shortcut=shortcut)
         doc = doc.cast()
         if doc.burn_after_reading:
@@ -49,9 +49,12 @@ def get_uploads(request, shortcut=None):
             except PageNotAnInteger:
                 show_lines = paginator.page(1)
             except EmptyPage:
-                show_lines = paginator.page(paginator.num_pages)
+                show_lines = paginator.page(paginator.num_pages)#
+            quota = KleberInput.objects.filter(owner=request.user) \
+                               .aggregate(models.Sum('size'))
             return render(request, 'pastes/history.html', {'pastes': uploads,
-                                                           'lines': show_lines})
+                                                           'lines': show_lines,
+                                                           'quota': quota.get('size__sum')})
         else:
             return redirect('users_login')
 
@@ -94,12 +97,16 @@ def upload(request, shortcut=None):
             upload_form = UploadFileForm(request.POST, request.FILES)
             if upload_form.is_valid():
                 file = upload_form.save()
+                file.owner = request.user
+                if not file.check_quota():
+                    upload_form.add_error('uploaded_file', 'No quota left')
+                    return render(request, 'pastes/create.html', {'form': paste_form,
+                                                                  'upload_form': upload_form})
                 file.set_lifetime(request.POST.get('lifetime'))
                 if request.POST.get('secure_url') == 'on':
                     file.secure_shortcut = True
                 if password:
                     file.set_password(password)
-                file.owner = request.user
                 file.checksum = file.calc_checksum_from_file()
                 remove_meta = request.POST.get('remove_meta')
                 try:
@@ -132,6 +139,10 @@ def upload(request, shortcut=None):
                     paste.secure_shortcut = True
                 if request.user.is_authenticated:
                     paste.owner = request.user
+                    if not paste.check_quota():
+                        paste_form.add_error('uploaded_file', 'No quota left')
+                        return render(request, 'pastes/create.html', {'form': paste_form,
+                                                                      'upload_form': upload_form})
                 if password:
                     paste.set_password(password)
                 paste.save()
@@ -178,6 +189,7 @@ def user_token_delete(request, token):
     else:
         return redirect('account_login')
 
+
 def user_invite_create(request):
     if request.user.is_authenticated:
         if not request.user.has_perm('web.add_invite'):
@@ -189,6 +201,7 @@ def user_invite_create(request):
     else:
         return redirect('account_login')
 
+
 def user_invite_delete(request, code):
     if request.user.is_authenticated:
         if not request.user.has_perm('web.delete_invite'):
@@ -198,6 +211,7 @@ def user_invite_delete(request, code):
         return redirect('users_account')
     else:
         return redirect('account_login')
+
 
 def about(request):
     return render(request, 'about.html')
