@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.exceptions import AuthenticationFailed, NotFound
+from rest_framework.exceptions import AuthenticationFailed, NotFound, ValidationError
 from rest_framework.response import Response
 from .serializers import PasteSerializer, FileSerializer, UploadSerializer
 
@@ -23,6 +23,8 @@ class PasteViewSet(viewsets.ModelViewSet):
             paste.secure_shortcut = True
         if self.request.user.is_authenticated:
             paste.owner = self.request.user
+            if not paste.check_quota():
+                return ValueError('No quota left')
         paste.save()
 
 
@@ -38,12 +40,14 @@ class FileViewSet(viewsets.ModelViewSet):
             return
         self.check_permissions(self.request)
         file = serializer.save()
+        file.owner = self.request.user
+        if not file.check_quota():
+            return ValueError('No quota left')
         file.set_lifetime(serializer.data.get('lifetime'))
         if serializer.data.get('secure_shortcut') == 'on':
             file.secure_shortcut = True
         if serializer.data.get('password'):
             file.password = serializer.data.get('password')
-        file.owner = self.request.user
         file.checksum = file.calc_checksum_from_file()
         remove_meta = serializer.data.get('remove_meta')
         try:
