@@ -4,7 +4,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import models
 import pygments.formatters
 
-from .models import KleberInput, Invite
+from .models import KleberInput, Voucher
 from .forms import CreatePasteForm, UploadFileForm
 from rest_framework.authtoken.models import Token
 from mal.shortcuts import remove_metadata, retrieve_metadata
@@ -167,9 +167,9 @@ def delete(request, shortcut):
 
 def user_account(request):
     tokens = Token.objects.filter(user=request.user)
-    invites = Invite.objects.filter(owner=request.user)
+    vouchers = Voucher.objects.filter(owner=request.user)
     return render(request, 'users/profile.html', {'tokens': tokens,
-                                                  'invites': invites})
+                                                  'vouchers': vouchers})
 
 
 def user_token_create(request):
@@ -190,24 +190,24 @@ def user_token_delete(request, token):
         return redirect('account_login')
 
 
-def user_invite_create(request):
+def user_voucher_create(request):
     if request.user.is_authenticated:
-        if not request.user.has_perm('web.add_invite'):
+        if not request.user.has_perm('web.add_voucher'):
             return HttpResponse(status=403)
-        invite = Invite()
-        invite.owner = request.user
-        invite.save()
+        voucher = Voucher()
+        voucher.owner = request.user
+        voucher.save()
         return redirect('users_account')
     else:
         return redirect('account_login')
 
 
-def user_invite_delete(request, code):
+def user_voucher_delete(request, code):
     if request.user.is_authenticated:
-        if not request.user.has_perm('web.delete_invite'):
+        if not request.user.has_perm('web.delete_voucher'):
             return HttpResponse(status=403)
-        invite = get_object_or_404(Invite, code=code)
-        invite.delete()
+        voucher = get_object_or_404(Voucher, code=code)
+        voucher.delete()
         return redirect('users_account')
     else:
         return redirect('account_login')

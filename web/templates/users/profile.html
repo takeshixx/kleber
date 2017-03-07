@@ -70,11 +70,11 @@
         </div>
     </div>
 </div>
-{% if user.is_authenticated and perms.web.add_invite %}
+{% if user.is_authenticated and perms.web.add_voucher %}
 <div class="row">
     <div class="col-xs-6 col-xs-offset-3">
         <div class="panel panel-warning">
-            <div class="panel-heading"><b>Invitation Codes</b></div>
+            <div class="panel-heading"><b>Vouchers</b></div>
             <table class="table">
                 <thead>
                     <tr>
@@ -85,20 +85,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% if invites %}
-                    {% for invite in invites %}
+                    {% if vouchers %}
+                    {% for voucher in vouchers %}
                     <tr>
-                        <td>{{ invite.code }}</td>
-                        <td>{% if invite.receiver %}
-                            {{ invite.receiver.email }}
+                        <td>{{ voucher.code }}</td>
+                        <td>{% if voucher.receiver %}
+                            {{ voucher.receiver.email }}
                         {% else %}
                             -
                         {% endif %}</td>
-                        <td>{{ invite.created }}</td>
+                        <td>{{ voucher.created }}</td>
                         <td>
-                        {% if not invite.used %}
-                        {% url 'users_invite_delete' code=invite.code as invite_url_delete %}
-                        {% bootstrap_button "Delete" href=invite_url_delete button_class="btn-danger btn-xs" %}
+                        {% if not voucher.used %}
+                        {% url 'users_voucher_delete' code=voucher.code as voucher_url_delete %}
+                        {% bootstrap_button "Delete" href=voucher_url_delete button_class="btn-danger btn-xs" %}
                         {% endif %}
                         </td>
                     </tr>
@@ -108,8 +108,8 @@
             </table>
             <div class="panel-footer">
                 <div class="btn-toolbar" role="toolbar">
-                    {% url 'users_invite_create' as invite_url_create %}
-                    {% bootstrap_button "Create Invitation Code" button_class="btn-primary" href=invite_url_create %}
+                    {% url 'users_voucher_create' as voucher_url_create %}
+                    {% bootstrap_button "Create Voucher" button_class="btn-primary" href=voucher_url_create %}
                 </div>
             </div>
         </div>

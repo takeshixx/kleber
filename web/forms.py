@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.template.defaultfilters import filesizeformat
 from django.contrib.auth.models import Group
 
-from .models import Paste, File, Invite
+from .models import Paste, File, Voucher
 
 LIFETIMES = [(0, 'Never expires'),
              (1, 'Burn after reading'),
@@ -108,14 +108,14 @@ class SignupForm(forms.Form):
     username = forms.CharField(max_length=30,
                                label='Username')
     email = forms.EmailField(label='Email Address')
-    invitaion_code = forms.CharField(max_length=32,
-                                     label='Invitation Code',
-                                     required=False)
+    voucher_code = forms.CharField(max_length=32,
+                                   label='Voucher',
+                                   required=False)
 
-    def clean_invitation_code(self):
-        code = self.cleaned_data['invitation_code']
-        invite = Invite.objects.filter(code=code).first()
-        if invite:
+    def clean_voucher_code(self):
+        code = self.cleaned_data['voucher_code']
+        voucher = Voucher.objects.filter(code=code).first()
+        if voucher:
             return code
         else:
             return None
@@ -125,13 +125,13 @@ class SignupForm(forms.Form):
         user.email = self.cleaned_data['email']
         user.set_password(self.cleaned_data['password1'])
         user.save()
-        invite_code = self.cleaned_data['invitaion_code']
-        if invite_code:
-            invite = Invite.objects.filter(code=invite_code,
-                                           used=False).first()
-            if invite and isinstance(invite, Invite):
+        voucher_code = self.cleaned_data['voucher_code']
+        if voucher_code:
+            voucher = Voucher.objects.filter(code=voucher_code,
+                                            used=False).first()
+            if voucher and isinstance(voucher, Voucher):
                 group = Group.objects.get(name='Can upload files')
                 group.user_set.add(user)
-                invite.receiver = user
-                invite.used = True
-                invite.save()
+                voucher.receiver = user
+                voucher.used = True
+                voucher.save()

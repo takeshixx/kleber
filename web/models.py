@@ -282,7 +282,7 @@ class File(KleberInput):
             return 'data'
 
 
-class Invite(models.Model):
+class Voucher(models.Model):
     code = models.CharField(max_length=16)
     owner = models.ForeignKey(User,
                               null=True,
@@ -305,10 +305,10 @@ class Invite(models.Model):
     def save(self, force_insert=False, force_update=False,
              using=None, update_fields=None):
         self.generate_code()
-        super(Invite, self).save(force_insert=force_insert,
-                                 force_update=force_update,
-                                 using=using,
-                                 update_fields=update_fields)
+        super(Voucher, self).save(force_insert=force_insert,
+                                  force_update=force_update,
+                                  using=using,
+                                  update_fields=update_fields)
 
     def generate_code(self):
         self.code = secrets.token_hex(16)
@@ -343,24 +343,24 @@ def init_groups(sender, **kwargs):
     file_uploads_group.permissions.add(file_change_perm)
     file_uploads_group.permissions.add(file_delete_perm)
 
-    invite_group, created = Group.objects.get_or_create(
-        name='Can invite users')
-    invite_ct = ContentType.objects.get_for_model(File)
-    invite_add_perm, created = Permission.objects.get_or_create(
-        codename='add_invite',
-        name='Can add invite',
-        content_type=invite_ct)
-    invite_change_perm, created = Permission.objects.get_or_create(
-        codename='change_invite',
-        name='Can change invite',
-        content_type=invite_ct)
-    invite_delete_perm, created = Permission.objects.get_or_create(
-        codename='delete_invite',
-        name='Can delete invite',
-        content_type=invite_ct)
-    invite_group.permissions.add(invite_add_perm)
-    invite_group.permissions.add(invite_change_perm)
-    invite_group.permissions.add(invite_delete_perm)
+    voucher_group, created = Group.objects.get_or_create(
+        name='Can use vouchers')
+    voucher_ct = ContentType.objects.get_for_model(Voucher)
+    voucher_add_perm, created = Permission.objects.get_or_create(
+        codename='add_voucher',
+        name='Can add voucher',
+        content_type=voucher_ct)
+    voucher_change_perm, created = Permission.objects.get_or_create(
+        codename='change_voucher',
+        name='Can change voucher',
+        content_type=voucher_ct)
+    voucher_delete_perm, created = Permission.objects.get_or_create(
+        codename='delete_voucher',
+        name='Can delete voucher',
+        content_type=voucher_ct)
+    voucher_group.permissions.add(voucher_add_perm)
+    voucher_group.permissions.add(voucher_change_perm)
+    voucher_group.permissions.add(voucher_delete_perm)
 
     quota_1g_group, created = Group.objects.get_or_create(
         name='Can upload 1G')
