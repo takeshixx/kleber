@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% load bootstrap3 %}
+{% load settings %}
 
 {% block bootstrap3_extra_head %}
     {{ block.super }}
     <script>
         function create_paste() {
             var encrypt = document.getElementById('id_is_encrypted');
-            var secure_url = document.getElementById('id_secure_url');
+            var secure_shortcut = document.getElementById('id_secure_shortcut');
             var paste_content = document.getElementById('id_content').value;
             var paste_name = document.getElementById('id_name').value;
             var paste_lifetime = document.getElementById('id_lifetime').value;
@@ -23,7 +24,7 @@
             var post_data = '{"content": "' + encodeURIComponent(encrypted_content) + '", ' +
                             '"name": "' + paste_name + '", ' +
                             '"lifetime": ' + paste_lifetime + ', ' +
-                            '"secure_shortcut": ' + secure_url.checked + ',' +
+                            '"secure_shortcut": ' + secure_shortcut.checked + ',' +
                             '"is_encrypted": true}';
             var fetch_headers = new Headers();
             fetch_headers.append('Content-Type', 'application/json; charset=UTF-8');
@@ -32,18 +33,24 @@
                               headers: fetch_headers,
                               body: post_data,
                               credentials: 'include'};
-            var fetch_req = new Request('http://127.0.0.1:8000/api/pastes/', fetch_init);
+            var fetch_req = new Request('{% settings_value "SITE_URL" %}/api/pastes/', fetch_init);
             fetch(fetch_req)
                 .then(function (response) {
                     var contentType = response.headers.get("content-type");
-                    if(contentType && contentType.indexOf("application/json") !== -1) {
+                    if(contentType && contentType.indexOf("application/json") !== -1 && response.ok) {
                         return response.json();
                     } else {
                         alert('Invalid response');
+                        return false;
                     }
                 })
                 .then(function (json) {
-                    window.location = 'http://127.0.0.1:8000/' + json.shortcut + '#' + encryption_key;
+                    if(json.shortcut){
+                        window.location = '{% settings_value "SITE_URL" %}/' + json.shortcut + '#' + encryption_key;
+                    } else {
+                        alert('shortcut not set');
+                        return false;
+                    }
                 })
                 .catch(function (error) {
                     alert(error);
