@@ -37,11 +37,6 @@
 <h3>Removal of Metadata</h3>
 <p>Kleber provides a metadata removal backend based on <a href="http://www.sno.phy.queensu.ca/~phil/exiftool/">ExifTool</a>. It allows to remove metadata like EXIF tags in image files during the upload. This allows to share clean files.</p>
 <br>
-<h2>Paste Encryption</h2>
-<p>Encryption of pastes is done in the browser with the <a href="https://github.com/digitalbazaar/forge">Forge</a> JavaScript library. By encrypting pastes, Kleber does not know the content of these pastes. The Forge JavaScript library is used to symmetrically encrypt pastes with AES256 in <a href="https://en.wikipedia.org/wiki/Galois/Counter_Mode">GCM</a> mode. Each paste is encrypted with a random key and IV.</p>
-<p>Because the key never hits the wire, encryption of the paste only works with the URL that will be created in the JavaScript upon paste creation. You can share this link with everyone that should be able to read the paste content. Everyone else who just knows the ID of the paste, will only receive the encrypted content. This also applies to Kleber itself.
-<div class="alert alert-danger" role="alert">Keep in mind that this feature will not provide 100% security!</div>
-<br>
 <h2 id="privacy">Privacy</h2>
 <p>Removing metadata from files shared to potentially untrusted parties on the Internet can enhance a user's privacy online. However, user have to keep in mind that removing metadata requires previous parsing of corresponding files. Besides parsing them, they might be modified.</p>
 <p>Unlike files, pastes are not affected by this. The backend just tries to determine mimetypes, but it won't modify pastes in any way. Parsing paste content, for e.g. pretty printing code snippets is done on the client side.</p>
