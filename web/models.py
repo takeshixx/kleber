@@ -63,7 +63,10 @@ class KleberInput(models.Model):
     def check_quota(self):
         current_quota = KleberInput.objects.filter(owner=self.owner)\
                                            .aggregate(models.Sum('size'))
-        total_quota = current_quota.get('size__sum') + self.size
+        if current_quota.get('size__sum') is not None:
+            total_quota = current_quota.get('size__sum') + self.size
+        else:
+            total_quota = self.size
         if self.owner.has_perm('web.quota_unlimited_file'):
             return True
         elif self.owner.has_perm('web.quota_4g_file'):
