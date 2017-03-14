@@ -31,8 +31,8 @@ EMAIL_USE_TLS = 1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['dev.kleber.io']
+SITE_URL = 'http://dev.kleber.io:8000'
 
 # Application definition
 
@@ -144,6 +144,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_ROOT = ''
 
 APPEND_SLASH = False
 
@@ -168,5 +169,11 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_PASSWORD_MIN_LENGTH = 8
 ACCOUNT_USERNAME_MIN_LENGTH = 3
 ACCOUNT_SIGNUP_FORM_CLASS = 'web.forms.SignupForm'
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 
 LOGIN_REDIRECT_URL = '/'
+
+try:
+    from kleber.local_settings_prod import *
+except ImportError:
+    pass
