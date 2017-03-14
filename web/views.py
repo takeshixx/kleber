@@ -4,6 +4,7 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import models
+from django.conf import settings
 import pygments.formatters
 
 from .models import KleberInput, Voucher

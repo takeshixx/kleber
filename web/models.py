@@ -15,6 +15,7 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_delete, post_migrate, pre_save
 from django.dispatch import receiver
+from django.conf import settings
 from rest_framework.authtoken.models import Token
 
 
@@ -247,7 +248,7 @@ class File(KleberInput):
     def calc_checksum_from_file(self, filename=None, blocksize=65536):
         filename = filename or self.uploaded_file.url
         hasher = hashlib.sha256()
-        with open(filename, 'rb') as f:
+        with open(settings.MEDIA_ROOT + filename, 'rb') as f:
             b = f.read(blocksize)
             while len(b) > 0:
                 hasher.update(b)
@@ -274,7 +275,7 @@ class File(KleberInput):
 
     def set_mimetype(self, file=None):
         if not file:
-            file = self.uploaded_file.name
+            file = settings.MEDIA_ROOT + self.uploaded_file.url
         try:
             self.mimetype = magic.from_file(file, mime=True)
             self.mimetype_long = magic.from_file(file)
