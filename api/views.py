@@ -1,9 +1,11 @@
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from rest_framework.exceptions import AuthenticationFailed, NotFound, ValidationError
+from rest_framework.permissions import AllowAny
+from rest_framework.exceptions import AuthenticationFailed, NotFound
 from rest_framework.response import Response
 from .serializers import PasteSerializer, FileSerializer, UploadSerializer
+from django.conf import settings
 
 from web.models import KleberInput, Paste, File
 from mal.shortcuts import remove_metadata, retrieve_metadata
@@ -11,21 +13,13 @@ from mal.shortcuts import remove_metadata, retrieve_metadata
 
 class PasteViewSet(viewsets.ModelViewSet):
     serializer_class = PasteSerializer
-    authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
+    permission_classes = (AllowAny,)
+    authentication_classes = (SessionAuthentication,
+                              BasicAuthentication,
+                              TokenAuthentication)
 
     def get_queryset(self):
         return Paste.objects.filter(owner=self.request.user)
-
-    def perform_create(self, serializer):
-        paste = serializer.save()
-        paste.set_lifetime(serializer.data.get('lifetime'))
-        if serializer.data.get('secure_shortcut') == 'on':
-            paste.secure_shortcut = True
-        if self.request.user.is_authenticated:
-            paste.owner = self.request.user
-            if not paste.check_quota():
-                return ValueError('No quota left')
-        paste.save()
 
 
 class FileViewSet(viewsets.ModelViewSet):
@@ -40,12 +34,10 @@ class FileViewSet(viewsets.ModelViewSet):
             return
         self.check_permissions(self.request)
         file = serializer.save()
+        file.set_size()
         file.owner = self.request.user
         if not file.check_quota():
             return ValueError('No quota left')
-        file.set_lifetime(serializer.data.get('lifetime'))
-        if serializer.data.get('secure_shortcut') == 'on':
-            file.secure_shortcut = True
         if serializer.data.get('password'):
             file.password = serializer.data.get('password')
         file.checksum = file.calc_checksum_from_file()
@@ -55,14 +47,14 @@ class FileViewSet(viewsets.ModelViewSet):
         except (ValueError, TypeError):
             remove_meta = 0
         if remove_meta and remove_meta > 1:
-            meta_status, meta_message = remove_metadata(file.uploaded_file.url)
+            meta_status, meta_message = remove_metadata(settings.MEDIA_ROOT + file.uploaded_file.url)
             file.remove_meta = meta_status
             file.remove_meta_message = meta_message
             if meta_status:
                 file.clean_checksum = file.calc_checksum_from_file()
         elif remove_meta == 1:
             file.store_metadata_dict(
-                retrieve_metadata(file.uploaded_file.url))
+                retrieve_metadata(settings.MEDIA_ROOT + file.uploaded_file.url))
             file.remove_meta = False
             file.remove_meta_message = 'Metadata stored, but not removed'
         file.save()

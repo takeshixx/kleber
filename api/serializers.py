@@ -32,6 +32,22 @@ class PasteSerializer(serializers.ModelSerializer):
                             'mimetype_long',
                             'created')
 
+    def create(self, validated_data):
+        paste = Paste(**validated_data)
+        paste.set_lifetime(validated_data.get('lifetime'))
+        if validated_data.get('secure_shortcut') == 'on':
+            paste.secure_shortcut = True
+        paste.set_shortcut()
+        paste.set_size()
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            if request.user.is_authenticated:
+                paste.owner = request.user
+                if not paste.check_quota():
+                    return ValueError('No quota left')
+        paste.save()
+        return paste
+
     def validate_lifetime(self, lifetime):
         try:
             lifetime = int(lifetime)
@@ -71,6 +87,14 @@ class FileSerializer(serializers.ModelSerializer):
                             'metadata')
         extra_kwargs = {'password': {'write_only': True},
                         'uploaded_file': {'write_only': True}}
+
+    def create(self, validated_data):
+        file = File(**validated_data)
+        file.set_lifetime(validated_data.get('lifetime'))
+        if validated_data.get('secure_shortcut') == 'on':
+            file.secure_shortcut = True
+        file.set_shortcut()
+        return file
 
     def validate_lifetime(self, lifetime):
         try:

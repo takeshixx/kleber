@@ -51,7 +51,6 @@ class KleberInput(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        self.set_shortcut()
         self.set_mimetype()
         self.set_lexer()
         self.set_size()
@@ -118,7 +117,7 @@ class KleberInput(models.Model):
             'paste']
         if shortcut:
             self.shortcut = shortcut
-        elif not self.shortcut:
+        else:
             if self.secure_shortcut:
                 min = 25
                 max = 40
@@ -127,7 +126,8 @@ class KleberInput(models.Model):
                 max = 9
             while True:
                 url = secrets.token_urlsafe(random.randrange(min, max))
-                if not Paste.objects.filter(shortcut=url).first() and not url in KLEBER_SHORTURL_BAD_WORDS:
+                if not Paste.objects.filter(shortcut=url).first() and \
+                        not url in KLEBER_SHORTURL_BAD_WORDS:
                     self.shortcut = url
                     break
 
