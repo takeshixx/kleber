@@ -284,7 +284,7 @@ class File(KleberInput):
 
 
 class Voucher(models.Model):
-    code = models.CharField(max_length=16)
+    code = models.TextField()
     owner = models.ForeignKey(User,
                               null=True,
                               related_name='owner_user')
