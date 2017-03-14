@@ -22,7 +22,7 @@ class CreatePasteForm(forms.ModelForm):
     lifetime = forms.ChoiceField(choices=LIFETIMES,
                                  widget=forms.Select(),
                                  required=True)
-    secure_url = forms.BooleanField(required=False,
+    secure_shortcut = forms.BooleanField(required=False,
                                     label=_('Generate a long shortcut'),
                                     help_text=_('Longer shortcuts will be harder to guess. So with '
                                                 'this option it will be harder to find this upload '
@@ -66,7 +66,7 @@ class UploadFileForm(forms.ModelForm):
     lifetime = forms.ChoiceField(choices=LIFETIMES,
                                  widget=forms.Select(),
                                  required=True)
-    secure_url = forms.BooleanField(required=False,
+    secure_shortcut = forms.BooleanField(required=False,
                                     label=_('Generate a long shortcut'),
                                     help_text=_('Longer shortcuts will be harder to guess. So with '
                                                 'this option it will be harder to find this upload '
