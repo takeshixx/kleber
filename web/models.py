@@ -138,13 +138,14 @@ class KleberInput(models.Model):
     def set_lexer(self, lexer='auto'):
         if not lexer or lexer == 'auto' and self.mimetype.startswith('text'):
             _lexer = None
-            try:
-                _lexer = pygments.lexers.get_lexer_for_mimetype(self.mimetype)
-            except pygments.util.ClassNotFound:
-                pass
-            if not _lexer:
+            if self.name:
                 try:
                     _lexer = pygments.lexers.get_lexer_for_filename(self.name)
+                except pygments.util.ClassNotFound:
+                    pass
+            if not _lexer:
+                try:
+                    _lexer = pygments.lexers.get_lexer_for_mimetype(self.mimetype)
                 except pygments.util.ClassNotFound:
                     pass
             if not _lexer:

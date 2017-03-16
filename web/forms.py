@@ -18,7 +18,10 @@ MAX_UPLOAD_SIZE = 262144000 # 250 MB
 
 class CreatePasteForm(forms.ModelForm):
     name = forms.CharField(label=_('Name (optional)'),
-                           required=False)
+                           required=False,
+                           help_text=_('Choosing a proper file extension for a paste name allows '
+                                       'to influence syntax highlighting (e.g. use \'test.py\' '
+                                       'to use syntax highlighting for Python snippets).'))
     lifetime = forms.ChoiceField(choices=LIFETIMES,
                                  widget=forms.Select(),
                                  required=True)
@@ -54,7 +57,10 @@ class CreatePasteForm(forms.ModelForm):
 
 class UploadFileForm(forms.ModelForm):
     name = forms.CharField(label=_('Name (optional)'),
-                           required=False)
+                           required=False,
+                           help_text=_('Choosing a proper file extension for a file name allows '
+                                       'to influence syntax highlighting (e.g. use \'test.py\' '
+                                       'to use syntax highlighting for Python files).'))
     remove_meta = forms.ChoiceField(choices=[(2, 'Remove metadata'),
                                              (1, 'Do not remove metadata'),
                                              (0, 'Do not touch this file')],
