@@ -45,8 +45,13 @@ def get_uploads(request, shortcut=None):
                                                         'password': password})
         else:
             if request.user.is_authenticated:
-                uploads = KleberInput.objects.filter(owner=request.user).order_by('-created')
-                uploads = [u.cast() for u in uploads]
+                uploads_db = KleberInput.objects.filter(owner=request.user).order_by('-created')
+                uploads = []
+                for u in uploads_db:
+                    if u.lifetime_expired():
+                        u.delete()
+                        continue
+                    uploads.append(u.cast())
                 limit = request.GET.get('limit')
                 try:
                     limit = int(limit)
