@@ -5,27 +5,22 @@
 
 {% block content %}
 <h1>CLI</h1>
-<p>Kleber provides an official client which allows pastes and uploads from the command line. It is written in pure shell script and aims to be POSIX compatible. Therefore it should be compatible with all major shells like <b>sh</b>, <b>bash</b> and <b>zsh</b>. The official client also aims to be simple and easy to understand. All basic features are available and it is easily extensible via the configuration file.</p>
-<p>In order to use Kleber from the command line, instead of using the official client one can easily write his own Kleber client. Because all the Kleber functionality is exposed via a RESTful API, it is easy to</p>
-<ul>
-    <li>write clients in every programming and scripting language.</li>
-    <li>implement <b>rc</b> file functions to upload files.</li>
-</ul>
-<br>
+<p>Kleber provides an official client which allows pastes and uploads from the command line. It is written in pure shell script and aims to be POSIX compatible (more or less). Therefore it should be compatible with most major shells like <b>bash</b> and <b>zsh</b>. All configuration values can be set via external configuration file.</p>
+
 <h2>Get It!</h2>
-<p>The sources of the Kleber CLI are available on <a href="https://github.com/kleber-io/kleber-cli">GitHub</a>.</p>
-<br>
+<p>The sources of the Kleber CLI are available on <a href="https://github.com/kleber-io/kleber-cli">GitHub</a>. There is also a <a href="https://aur.archlinux.org/packages/kleber-git">kleber-git</a> package available in the Arch User Repository (AUR).</p>
+
 <h2>Installation</h2>
 <pre>$ git clone https://github.com/kleber-io/kleber-cli.git
 $ cd kleber-cli
 # make install</pre>
-<br>
+
 <h2>Configuration</h2>
-<p>Kleber supports configuration files. The default configuration file is located at ~/.kleberrc. Any variables of the CLI can be overwritten with configuration files, so modifying the code in order to change it's behaviour is not necessary.</p>
-<h4>Minimal configuration file</h4>
-<p>A minimal configuration file includes just one line: a valid API key:</p>
+<p>Kleber supports configuration files. The default configuration file is located at <kbd>~/.kleberrc</kbd>. Any variables of the CLI can be overwritten with configuration files, so modifying the code in order to change it's behaviour is not necessary.</p>
+<h3>Minimal configuration file</h3>
+<p>A minimal configuration file includes just one line with a valid Authentication Token:</p>
 <pre>KLEBER_API_KEY=APIKEY</pre>
-<br>
+
 <h2>Examples</h2>
 <h4>Upload a File</h4>
 <pre>$ kleber --upload /data/file</pre>
@@ -37,7 +32,8 @@ $ cd kleber-cli
 <pre>$ kleber --list</pre>
 <h4>Help Page</h4>
 <pre>$ kleber --help</pre>
-<br>
+
 <h2>Contribute</h2>
 <p>Feel free to open issues and create pull requests on the <a href="https://github.com/kleber-io/kleber-cli">GitHub</a> page.</p>
+<br />
 {% endblock %}
