@@ -1,7 +1,11 @@
 import datetime
+import logging
 
 from django.core.management.base import BaseCommand
+
 from web.models import KleberInput
+
+LOGGER = logging.getLogger('management_commands')
 
 
 class Command(BaseCommand):

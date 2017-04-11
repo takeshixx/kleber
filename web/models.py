@@ -3,6 +3,7 @@ import hashlib
 import random
 import secrets
 import magic
+import logging
 import mimetypes
 import pygments
 import pygments.lexers
@@ -17,6 +18,8 @@ from django.db.models.signals import post_delete, post_migrate, pre_save
 from django.dispatch import receiver
 from django.conf import settings
 from rest_framework.authtoken.models import Token
+
+LOGGER = logging.getLogger(__name__)
 
 
 class KleberInput(models.Model):

@@ -1,7 +1,14 @@
+import logging
+
 from django.utils import timezone
 from rest_framework import serializers
+from django.conf import settings
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 from web.models import KleberInput, Paste, File
+
+LOGGER = logging.getLogger(__name__)
 
 LIFETIMES = [(0, 'Never expires'),
              (1, 'Burn after reading'),
