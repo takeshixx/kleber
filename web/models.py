@@ -55,6 +55,7 @@ class KleberInput(models.Model):
         self.set_mimetype()
         self.set_lexer()
         self.set_size()
+        self.set_shortcut()
         super(KleberInput, self).save(force_insert=force_insert,
                                       force_update=force_update,
                                       using=using,
@@ -121,7 +122,11 @@ class KleberInput(models.Model):
             'paste']
         if shortcut:
             self.shortcut = shortcut
+        elif self.shortcut:
+            print('shortcut already set')
+            return
         else:
+            print('setting shortcut')
             if self.secure_shortcut:
                 min = 25
                 max = 40
@@ -227,7 +232,7 @@ class Paste(KleberInput):
 
 
 class File(KleberInput):
-    uploaded_file = models.FileField(upload_to='uploads/',
+    uploaded_file = models.FileField(upload_to=settings.UPLOAD_PATH,
                                      default=None)
     remove_meta = models.BooleanField(default=False)
     remove_meta_message = models.TextField()
@@ -252,7 +257,7 @@ class File(KleberInput):
     def calc_checksum_from_file(self, filename=None, blocksize=65536):
         filename = filename or self.uploaded_file.url
         hasher = hashlib.sha256()
-        with open(settings.MEDIA_ROOT + filename, 'rb') as f:
+        with open(filename, 'rb') as f:
             b = f.read(blocksize)
             while len(b) > 0:
                 hasher.update(b)
@@ -279,7 +284,7 @@ class File(KleberInput):
 
     def set_mimetype(self, file=None):
         if not file:
-            file = settings.MEDIA_ROOT + self.uploaded_file.url
+            file = self.uploaded_file.url
         try:
             self.mimetype = magic.from_file(file, mime=True)
             self.mimetype_long = magic.from_file(file)

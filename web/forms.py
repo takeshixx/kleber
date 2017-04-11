@@ -54,6 +54,28 @@ class CreatePasteForm(forms.ModelForm):
             pass
         return None
 
+    def save(self, commit=True, request=None, *args, **kwargs):
+        password = self.cleaned_data.get('password')
+        paste = Paste()
+        paste.content = self.cleaned_data['content']
+        paste.set_size()
+        paste.owner = request.user
+        if request.user.is_authenticated:
+            paste.owner = request.user
+            if not paste.check_quota():
+                self.add_error('content', 'No quota left')
+        paste.name = self.cleaned_data['name']
+        paste.set_mimetype()
+        paste.set_lexer()
+        paste.set_lifetime(self.cleaned_data['lifetime'])
+        if self.cleaned_data['secure_shortcut']:
+            paste.secure_shortcut = True
+        paste.set_shortcut()
+        if password:
+            paste.set_password(password)
+        paste.save()
+        return paste
+
 
 class UploadFileForm(forms.ModelForm):
     name = forms.CharField(label=_('Name (optional)'),
@@ -108,6 +130,45 @@ class UploadFileForm(forms.ModelForm):
             raise forms.ValidationError(_('File uploads must be %s or less.' %
                                           filesizeformat(MAX_UPLOAD_SIZE)))
         return self.cleaned_data['uploaded_file']
+
+    def save(self, commit=True, request=None, *args, **kwargs):
+        password = self.cleaned_data['password']
+        file = File()
+        path = default_storage.save(settings.UPLOAD_PATH,
+                                    ContentFile(self.cleaned_data['uploaded_file'].read()))
+        file.uploaded_file = path
+        file.name = self.cleaned_data['name'] or self.cleaned_data['uploaded_file'].name
+        file.set_size()
+        file.owner = request.user
+        if not file.check_quota():
+            self.add_error('uploaded_file', 'No quota left')
+        file.set_mimetype()
+        file.set_lexer()
+        file.set_lifetime(self.cleaned_data['lifetime'])
+        if self.cleaned_data['secure_shortcut']:
+            file.secure_shortcut = True
+        file.set_shortcut()
+        if password:
+            file.set_password(password)
+        file.checksum = file.calc_checksum_from_file()
+        remove_meta = self.cleaned_data['remove_meta']
+        try:
+            remove_meta = int(remove_meta)
+        except ValueError:
+            remove_meta = 0
+        if remove_meta and remove_meta > 1:
+            meta_status, meta_message = remove_metadata(file.uploaded_file.url)
+            file.remove_meta = meta_status
+            file.remove_meta_message = meta_message
+            if meta_status:
+                file.clean_checksum = file.calc_checksum_from_file()
+        elif remove_meta == 1:
+            file.store_metadata_dict(
+                retrieve_metadata(file.uploaded_file.url))
+            file.remove_meta = False
+            file.remove_meta_message = 'Metadata stored, but not removed'
+        file.save()
+        return file
 
 
 class SignupForm(forms.Form):

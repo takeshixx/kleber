@@ -23,6 +23,8 @@ class Command(BaseCommand):
             for u in uploads:
                 print('\t' + u.shortcut)
             return
-        for u in uploads:
-            u.delete()
-        print('Deleted %d uploads' % len(uploads))
+        if uploads:
+            for u in uploads:
+                u.delete()
+            print('Deleted %d uploads' % len(uploads))
+            LOGGER.info('Deleted %d uploads' % len(uploads))

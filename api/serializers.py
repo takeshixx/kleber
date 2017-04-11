@@ -33,20 +33,23 @@ class PasteSerializer(serializers.ModelSerializer):
                             'created')
 
     def create(self, validated_data):
-        paste = Paste(**validated_data)
-        paste.set_lifetime(validated_data.get('lifetime'))
-        if validated_data.get('secure_shortcut') == 'on':
-            paste.secure_shortcut = True
-        paste.set_shortcut()
-        paste.set_size()
-        request = self.context.get("request")
-        if request and hasattr(request, "user"):
-            if request.user.is_authenticated:
-                paste.owner = request.user
-                if not paste.check_quota():
-                    return ValueError('No quota left')
-        paste.save()
-        return paste
+        try:
+            paste = Paste(**validated_data)
+            paste.set_lifetime(validated_data.get('lifetime'))
+            if validated_data.get('secure_shortcut') == 'on':
+                paste.secure_shortcut = True
+            paste.set_shortcut()
+            paste.set_size()
+            request = self.context.get("request")
+            if request and hasattr(request, "user"):
+                if request.user.is_authenticated:
+                    paste.owner = request.user
+                    if not paste.check_quota():
+                        return ValueError('No quota left')
+            paste.save()
+            return paste
+        except Exception as e:
+            LOGGER.exception(e)
 
     def validate_lifetime(self, lifetime):
         try:
@@ -89,12 +92,20 @@ class FileSerializer(serializers.ModelSerializer):
                         'uploaded_file': {'write_only': True}}
 
     def create(self, validated_data):
-        file = File(**validated_data)
-        file.set_lifetime(validated_data.get('lifetime'))
-        if validated_data.get('secure_shortcut') == 'on':
-            file.secure_shortcut = True
-        file.set_shortcut()
-        return file
+        try:
+            file = File(**validated_data)
+            path = default_storage.save(settings.UPLOAD_PATH,
+                                        ContentFile(validated_data.get('uploaded_file').read()))
+            file.uploaded_file = path
+            file.name = validated_data.get('name') or validated_data.get('uploaded_file').name
+            file.set_lifetime(validated_data.get('lifetime'))
+            if validated_data.get('secure_shortcut') == 'on':
+                file.secure_shortcut = True
+            file.set_shortcut()
+            return file
+        except Exception as e:
+            LOGGER.exception(e)
+            raise
 
     def validate_lifetime(self, lifetime):
         try:

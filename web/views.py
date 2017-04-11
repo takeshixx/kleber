@@ -119,36 +119,10 @@ def upload(request, shortcut=None):
                     return HttpResponse(status=403)
                 upload_form = UploadFileForm(request.POST, request.FILES)
                 if upload_form.is_valid():
-                    file = upload_form.save()
-                    file.owner = request.user
-                    if not file.check_quota():
-                        upload_form.add_error('uploaded_file', 'No quota left')
+                    file = upload_form.save(request=request)
+                    if upload_form.has_error('uploaded_file'):
                         return render(request, 'pastes/create.html', {'form': paste_form,
                                                                       'upload_form': upload_form})
-                    file.set_lifetime(request.POST.get('lifetime'))
-                    if request.POST.get('secure_shortcut') == 'on':
-                        file.secure_shortcut = True
-                    file.set_shortcut()
-                    if password:
-                        file.set_password(password)
-                    file.checksum = file.calc_checksum_from_file()
-                    remove_meta = request.POST.get('remove_meta')
-                    try:
-                        remove_meta = int(remove_meta)
-                    except ValueError:
-                        remove_meta = 0
-                    if remove_meta and remove_meta > 1:
-                        meta_status, meta_message = remove_metadata(settings.MEDIA_ROOT + file.uploaded_file.url)
-                        file.remove_meta = meta_status
-                        file.remove_meta_message = meta_message
-                        if meta_status:
-                            file.clean_checksum = file.calc_checksum_from_file()
-                    elif remove_meta == 1:
-                        file.store_metadata_dict(
-                            retrieve_metadata(settings.MEDIA_ROOT + file.uploaded_file.url))
-                        file.remove_meta = False
-                        file.remove_meta_message = 'Metadata stored, but not removed'
-                    file.save()
                     response = redirect('uploads_short',
                                         shortcut=file.shortcut)
                     if password:
@@ -157,20 +131,10 @@ def upload(request, shortcut=None):
             else:
                 paste_form = CreatePasteForm(request.POST)
                 if paste_form.is_valid():
-                    paste = paste_form.save()
-                    paste.set_lifetime(request.POST.get('lifetime'))
-                    if request.POST.get('secure_shortcut') == 'on':
-                        paste.secure_shortcut = True
-                    paste.set_shortcut()
-                    if request.user.is_authenticated:
-                        paste.owner = request.user
-                        if not paste.check_quota():
-                            paste_form.add_error('uploaded_file', 'No quota left')
-                            return render(request, 'pastes/create.html', {'form': paste_form,
-                                                                          'upload_form': upload_form})
-                    if password:
-                        paste.set_password(password)
-                    paste.save()
+                    paste = paste_form.save(request=request)
+                    if paste_form.has_error('content'):
+                        return render(request, 'pastes/create.html', {'form': paste_form,
+                                                                      'upload_form': upload_form})
                     response = redirect('uploads_short',
                                         shortcut=paste.shortcut)
                     if password:
