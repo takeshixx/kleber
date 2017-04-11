@@ -92,11 +92,17 @@ def uploads_plain(request, shortcut):
         if doc.password and not doc.check_password(password):
             return render(request, 'pastes/password.html', {'paste': doc})
         if doc.is_file:
-            mimetype = doc.mimetype or 'application/octet-stream'
+            if doc.mimetype and doc.mimetype.startswith('image'):
+                mimetype = doc.mimetype or 'application/octet-stream'
+            elif doc.mimetype and doc.mimetype.startswith('text'):
+                mimetype = 'text/plain'
+            else:
+                mimetype = 'application/octet-stream'
             return HttpResponse(doc.uploaded_file.file.read(),
                                 content_type=mimetype)
         else:
-            return HttpResponse(doc.content)
+            return HttpResponse(doc.content,
+                                content_type='text/plain')
     except Exception as e:
         LOGGER.exception(e)
         raise
