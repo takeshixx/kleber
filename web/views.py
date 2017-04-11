@@ -10,7 +10,6 @@ import pygments.formatters
 from .models import KleberInput, Voucher
 from .forms import CreatePasteForm, UploadFileForm
 from rest_framework.authtoken.models import Token
-from mal.shortcuts import remove_metadata, retrieve_metadata
 
 LOGGER = logging.getLogger(__name__)
 

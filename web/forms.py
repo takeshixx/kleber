@@ -3,8 +3,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.template.defaultfilters import filesizeformat
 from django.contrib.auth.models import Group
+from django.conf import settings
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 from .models import Paste, File, Voucher
+from mal.shortcuts import remove_metadata, retrieve_metadata
 
 LIFETIMES = [(0, 'Never expires'),
              (1, 'Burn after reading'),
@@ -24,7 +28,8 @@ class CreatePasteForm(forms.ModelForm):
                                        'to use syntax highlighting for Python snippets).'))
     lifetime = forms.ChoiceField(choices=LIFETIMES,
                                  widget=forms.Select(),
-                                 required=True)
+                                 required=True,
+                                 help_text='Pastes will be deleted after 10 days automatically unless they are smaller than 1 MB.')
     secure_shortcut = forms.BooleanField(required=False,
                                     label=_('Generate a long shortcut'),
                                     help_text=_('Longer shortcuts will be harder to guess. So with '
@@ -93,7 +98,8 @@ class UploadFileForm(forms.ModelForm):
                                     required=True)
     lifetime = forms.ChoiceField(choices=LIFETIMES,
                                  widget=forms.Select(),
-                                 required=True)
+                                 required=True,
+                                 help_text='Files will be deleted after 10 days automatically unless they are smaller than 1 MB.')
     secure_shortcut = forms.BooleanField(required=False,
                                     label=_('Generate a long shortcut'),
                                     help_text=_('Longer shortcuts will be harder to guess. So with '
