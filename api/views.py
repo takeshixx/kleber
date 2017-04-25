@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, BasePermission
 from rest_framework.exceptions import AuthenticationFailed, NotFound
 from rest_framework.response import Response
 from .serializers import PasteSerializer, FileSerializer, UploadSerializer
-from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 
 from web.models import KleberInput, Paste, File
 from mal.shortcuts import remove_metadata, retrieve_metadata
@@ -22,7 +22,11 @@ class PasteViewSet(viewsets.ModelViewSet):
                               TokenAuthentication)
 
     def get_queryset(self):
-        return Paste.objects.filter(owner=self.request.user)
+        if self.request.user and \
+                not isinstance(self.request.user, AnonymousUser):
+            return Paste.objects.filter(owner=self.request.user)
+        else:
+            return Paste.objects.none()
 
 
 class ApiFilePermission(BasePermission):
