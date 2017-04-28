@@ -64,7 +64,6 @@ class CreatePasteForm(forms.ModelForm):
         paste = Paste()
         paste.content = self.cleaned_data['content']
         paste.set_size()
-        paste.owner = request.user
         if request.user.is_authenticated:
             paste.owner = request.user
             if not paste.check_quota():
