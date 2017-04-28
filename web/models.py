@@ -225,13 +225,21 @@ class Paste(KleberInput):
         content = content or self.content
         # Second, try to guess the mimetype from the content
         try:
-            self.mimetype = magic.from_buffer(content)
-            if self.mimetype == 'data':
+            mimetype = magic.from_buffer(content)
+            if mimetype == 'data':
                 raise TypeError
-            self.mimetype_long = magic.from_buffer(content)
-        except Exception:
+            else:
+                self.mimetype = mimetype
+        except TypeError:
+            # If the magic module fails, try it with pygments
+            mimetype = pygments.lexers.guess_lexer(content)
+            if not mimetype:
+                self.mimetype = 'text/plain'
+            else:
+                self.mimetype = mimetype.mimetypes[0]
+        except Exception as e:
+            LOGGER.exception(e)
             self.mimetype = 'text/plain'
-            self.mimetype_long = 'text/plain'
 
 
 class File(KleberInput):
