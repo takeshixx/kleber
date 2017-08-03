@@ -89,6 +89,9 @@
                             {% if paste.checksum %}
                                 <li><b>Checksum (SHA256):</b> {{ paste.checksum }}</li>
                             {% endif %}
+                            {% if paste.clean_checksum and paste.checksum != paste.clean_checksum %}
+                                <li><b>Checksum clean (SHA256):</b> {{ paste.clean_checksum }}</li>
+                            {% endif %}
                             {% if paste.remove_meta_message %}
                                 <li><b>Metadata Message:</b> {{ paste.remove_meta_message }}</li>
                             {% endif %}
