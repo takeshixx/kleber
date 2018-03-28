@@ -28,6 +28,6 @@ urlpatterns = [
     url(r'^accounts/', include('allauth.urls')),
     url(r'^api/', include(api_router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^klebercontrolpanel/', admin.site.urls),
+    url(r'^klebercontrolpanel/?', admin.site.urls),
     url(r'^', include('web.urls')),
 ]

@@ -6,10 +6,10 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.upload, name='index'),
-    url(r'^about/$', views.about, name='about'),
-    url(r'^cli/$', views.cli, name='cli'),
+    url(r'^about/?$', views.about, name='about'),
+    url(r'^cli/?$', views.cli, name='cli'),
     url(r'^robots.txt', lambda x: HttpResponse("User-Agent: *\nDisallow:", content_type="text/plain"), name="robots_file"),
-    url(r'^users/$', views.user_account, name='users_account'),
+    url(r'^users/?$', views.user_account, name='users_account'),
     url(r'^users/tokens/create/$', views.user_token_create, name='users_token_create'),
     url(r'^users/tokens/delete/(?P<token>[a-zA-Z0-9]+)/$', views.user_token_delete, name='users_token_delete'),
     url(r'^users/vouchers/create/$', views.user_voucher_create, name='users_voucher_create'),
