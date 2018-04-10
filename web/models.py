@@ -236,7 +236,10 @@ class Paste(KleberInput):
             if not mimetype:
                 self.mimetype = 'text/plain'
             else:
-                self.mimetype = mimetype.mimetypes[0]
+                if mimetype.mimetypes:
+                    self.mimetype = mimetype.mimetypes[0]
+                else:
+                    self.mimetype = 'text/plain'
         except Exception as e:
             LOGGER.exception(e)
             self.mimetype = 'text/plain'
