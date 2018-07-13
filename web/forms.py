@@ -98,7 +98,7 @@ class UploadFileForm(forms.ModelForm):
     lifetime = forms.ChoiceField(choices=LIFETIMES,
                                  widget=forms.Select(),
                                  required=True,
-                                 help_text='Files will be deleted after 10 days automatically unless they are smaller than 1 MB.')
+                                 help_text='Pastes over 1MB in size will be automatically deleted after 10 days.')
     secure_shortcut = forms.BooleanField(required=False,
                                     label=_('Generate a long shortcut'),
                                     help_text=_('Longer shortcuts will be harder to guess. So with '
