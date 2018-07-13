@@ -81,7 +81,9 @@ def uploads_plain(request, shortcut):
     if doc.password and not doc.check_password(password):
         return render(request, 'pastes/password.html', {'paste': doc})
     if doc.is_file:
-        if doc.mimetype and doc.mimetype.startswith('image'):
+        if doc.mimetype and (doc.mimetype.startswith('image')
+                or doc.mimetype.startswith('video')
+                or doc.mimetype.startswith('audio')):
             mimetype = doc.mimetype or 'application/octet-stream'
         elif doc.mimetype and doc.mimetype.startswith('text'):
             mimetype = 'text/plain'
