@@ -5,27 +5,26 @@
 
 {% block content %}
 <h1>CLI</h1>
-<p>Kleber provides an official client which allows pastes and uploads from the command line. It is written in pure shell script and aims to be POSIX compatible (more or less). Therefore it should be compatible with most major shells like <b>bash</b> and <b>zsh</b>. All configuration values can be set via external configuration file.</p>
+<p>Kleber provides an official client which allows pastes and uploads from the command line. The main purpose is to provide a command line interface where the basic API features are implemented. Uploading of pure text as well as data/binary is supported from either files or STDIN.</p>
 
 <h2>Get It!</h2>
-<p>The sources of the Kleber CLI are available on <a href="https://github.com/kleber-io/kleber-cli">GitHub</a>. There is also a <a href="https://aur.archlinux.org/packages/kleber-git">kleber-git</a> package available in the Arch User Repository (AUR).</p>
+<p>The sources of the Kleber CLI are available on <a href="https://github.com/takeshixx/kleber-cli">GitHub</a>. There is also a <a href="https://aur.archlinux.org/packages/kleber-git">kleber-git</a> package available in the Arch User Repository (AUR).</p>
 
 <h2>Installation</h2>
-<pre>$ git clone https://github.com/kleber-io/kleber-cli.git
-$ cd kleber-cli
-# make install</pre>
+<pre>$ pip install -r requirements.txt
+$ pit install .</pre>
 
 <h2>Configuration</h2>
-<p>Kleber supports configuration files. The default configuration file is located at <kbd>~/.kleberrc</kbd>. Any variables of the CLI can be overwritten with configuration files, so modifying the code in order to change it's behaviour is not necessary.</p>
+<p>Kleber supports configuration files. The default configuration file is located at <kbd>~/.kleberrc</kbd>.</p>
 <h3>Minimal configuration file</h3>
 <p>A minimal configuration file includes just one line with a valid Authentication Token:</p>
-<pre>KLEBER_API_KEY=APIKEY</pre>
+<pre>{"api_key": "$INSERT_API_KEY_HERE"}</pre>
 
 <h2>Examples</h2>
 <h4>Upload a File</h4>
-<pre>$ kleber --upload /data/file</pre>
+<pre>$ kleber /data/file</pre>
 <h4>Upload From STDIN</h4>
-<pre>$ echo "Kleber is awesome" | kleber</pre>
+<pre>$ echo "Kleber is awesome" | kleber -</pre>
 <h4>Create a paste from STDIN with a given name</h4>
 <pre>$ echo "More Kleber" | kleber --name mypaste</pre>
 <h4>List Upload History</h4>
@@ -34,6 +33,6 @@ $ cd kleber-cli
 <pre>$ kleber --help</pre>
 
 <h2>Contribute</h2>
-<p>Feel free to open issues and create pull requests on the <a href="https://github.com/kleber-io/kleber-cli">GitHub</a> page.</p>
+<p>Feel free to open issues and create pull requests on the <a href="https://github.com/takeshixx/kleber-cli">GitHub</a> page.</p>
 <br />
 {% endblock %}
