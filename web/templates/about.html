@@ -5,14 +5,14 @@
 
 {% block content %}
 <h1>About</h1>
-<p>Kleber is a pastebin with various features like paste encryption, file uploads, removal of metadata from uploaded files, an upload history and a RESTful, JSON-based API. It can be either used via the web or the official <a href="{%  url 'cli' %}">command line client</a> on POSIX compatible shells.</p>
+<p>Kleber is a pastebin with various features like paste encryption, file uploads, removal of metadata from uploaded files, an upload history and a RESTful, JSON-based API. It can be either used via the web or the official <a href="{%  url 'cli' %}">command line client</a> (requires Python).</p>
 <p>The aim of Kleber is to provide an easy-to-use platform for quickly sharing pastes (e.g. code snippets) and files. The idea behind it is to be a place to temporarily upload pastes and files, not to be an online backup system. Therefore files that exceed a certain size will be removed from the system automatically after 10 days.</p>
 
 <h2 id="contact">Contact</h2>
 <p>Write an email to <a href="mailto:&#105;&#110;&#102;&#111;&#064;&#107;&#108;&#101;&#098;&#101;&#114;&#046;&#105;&#111;">&#105;&#110;&#102;&#111;&#064;&#107;&#108;&#101;&#098;&#101;&#114;&#046;&#105;&#111;</a> for any kind of inquiry.</p>
 
 <h2 id="contact">Using Kleber</h2>
-<p>Pastes can be created by everyone including anonymous users. In order to use the paste history, one has to create an account or login with one of the supported third party authentication providers. Uploading files is currently only available for accounts that heve been created with a valid voucher.</p>
+<p>Pastes can be created by everyone including anonymous users. In order to use the paste history, one has to create an account or login with one of the supported third party authentication providers. Uploading files is currently only available for accounts that have been created with a valid voucher.</p>
 <p>If you don't know anyone that is already a Kleber user with permissions to create vouchers but would like to use the file upload functionality, ping us.</p>
 
 <h2 id="metadata">Metadata</h2>
@@ -42,7 +42,7 @@
 <p>Kleber provides a metadata removal backend based on <a href="http://www.sno.phy.queensu.ca/~phil/exiftool/">ExifTool</a>. It allows to remove metadata like EXIF tags in image files during the upload. This allows to share clean files without any additional effort to manually clean them first.</p>
 
 <h2 id="privacy">Privacy</h2>
-<p>Removing metadata from files shared to potentially untrusted parties on the Internet can enhance a user's privacy online. However, user have to keep in mind that removing metadata requires parsing of those files. Besides parsing them, they might be modified depending on the identified metadata.</p>
+<p>Removing metadata from files shared to potentially untrusted parties on the Internet can enhance a user's privacy online. However, users have to keep in mind that removing metadata requires parsing of those files. Besides parsing them, they might be modified depending on the identified metadata.</p>
 <p>Unlike files, pastes are not affected by this. The backend just tries to determine mimetypes and lexers for pretty printing code snippets but it won't modify pastes in any way.</p>
 <br />
 {% endblock %}
