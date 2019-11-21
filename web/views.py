@@ -84,11 +84,20 @@ def uploads_plain(request, shortcut):
         if doc.mimetype and (doc.mimetype.startswith('image')
                 or doc.mimetype.startswith('video')
                 or doc.mimetype.startswith('audio')):
-            mimetype = doc.mimetype or 'application/octet-stream'
+            mimetype = doc.mimetype
         elif doc.mimetype and doc.mimetype.startswith('text'):
             mimetype = 'text/plain'
+        elif doc.mimetype and doc.mimetype == 'application/pdf':
+            response = HttpResponse(doc.uploaded_file.file.read(),
+                                    content_type=doc.mimetype)
+            response['Content-Disposition'] = 'inline; filename= "{}"'.format(doc.name)
+            return response
         else:
             mimetype = 'application/octet-stream'
+            response = HttpResponse(doc.uploaded_file.file.read(),
+                                    content_type=mimetype)
+            response['Content-Disposition'] = 'attachment; filename= "{}"'.format(doc.name)
+            return response
         return HttpResponse(doc.uploaded_file.file.read(),
                             content_type=mimetype)
     else:

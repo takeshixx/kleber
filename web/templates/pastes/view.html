@@ -160,6 +160,8 @@
                 <div class="text-center">
                     <img class="image-preview" src="{% url 'uploads_plain' shortcut=paste.shortcut %}{% if password %}?password={{ password }}{% endif %}" />
                 </div>
+            {% elif paste.mimetype == 'application/pdf' %}
+                <embed src="{% url 'uploads_plain' shortcut=paste.shortcut %}{% if password %}?password={{ password }}{% endif %}" style="width: 100%; height: 100%; min-height: 600px;">
             {% else %}
                 <div class="text-center">
                     <a href="{% url 'uploads_plain' shortcut=paste.shortcut %}"><i class="glyphicon glyphicon-cloud-download download-icon" aria-hidden="true"></i></a>
