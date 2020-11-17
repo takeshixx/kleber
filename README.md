@@ -10,7 +10,7 @@ Additional features:
 * Upload history for logged-in users
 * Login via GitHub
 
-## Example Confgiuration
+## Example Configuration
 
 The included [settings.py](https://github.com/takeshixx/kleber/blob/master/kleber/settings.py) configures everything that is required by Kleber. It is suited for local development setups where it just uses a SQLite database. To configure a production setup, the file `kleber/local_settings_prod.py` should be added. The following listing shows an example of such a file, where all settings can be overwritten:
 
