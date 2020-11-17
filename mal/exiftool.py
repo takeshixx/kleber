@@ -67,7 +67,7 @@ try:        # Py3k compatibility
 except NameError:
     basestring = (bytes, str)
 
-executable = '/usr/local/bin/exiftool'
+executable = 'exiftool'
 """The name of the executable to run.
 
 If the executable is not located in one of the paths listed in the
