@@ -246,7 +246,7 @@ class Paste(KleberInput):
 
 
 class File(KleberInput):
-    uploaded_file = models.FileField(upload_to=settings.UPLOAD_PATH,
+    uploaded_file = models.FileField(upload_to=lambda instance, filename: 'uploads/'+filename,
                                      default=None)
     remove_meta = models.BooleanField(default=False)
     remove_meta_message = models.TextField()

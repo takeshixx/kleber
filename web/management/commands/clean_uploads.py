@@ -12,8 +12,8 @@ class Command(BaseCommand):
     """Delete uploads that are older than x days
     and are bigger than 1MB. Should run as crontab:
 
-    */10 * * * * /usr/local/bin/sudo -u www /usr/local/www/env/bin/python \
-    /usr/local/www/kleber/manage.py clean_uploads"""
+    */10 * * * * sudo -u www /usr/local/www/env/bin/python \
+    /srv/kleber/manage.py clean_uploads"""
     def add_arguments(self, parser):
         parser.add_argument('-q', action='store_true', dest='query',
                             help='Just query uploads, do not delete.')
