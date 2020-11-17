@@ -12,11 +12,11 @@
     <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block bootstrap3_title %}{% block title %}Kleber{% endblock %}{% endblock %}</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/slate/bootstrap.min.css" rel="stylesheet" integrity="sha256-cp9lCRHDsELuWqPLwCHG6LXz+nk32BzccNd0N2v5yjM=" crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sjcl/1.0.7/sjcl.min.js" integrity="sha256-dFf9Iqsg4FM3OHx2k9aK6ba1l28881fMWFjhMV9MB4c=" crossorigin="anonymous"></script>
-    <link rel="shortcut icon" type="image/png" href="{% static "favicon.ico" %}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" integrity="sha512-oc9+XSs1H243/FRN9Rw62Fn8EtxjEYWHXRvjS43YtueEewbS6ObfXcJNyohjHqVKFPoXXUxwc+q1K7Dee6vv9g==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://bootswatch.com/4/slate/bootstrap.min.css" integrity="sha384-5TymqInbhdo/7yoYstmcyfckYfxeth0Gon8vGVbNuDexZ3N+x9FlE1jD9KPBY5f8" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/regular.min.css" integrity="sha512-rVrbAp27ffQyFnzJ/aC5fZv9JgvL6cdB4zsL5HmM+DhJdzThc/F//62SJF+CaGiOZTP35e1p8JGcc+zRRVuhRw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sjcl/1.0.8/sjcl.min.js" integrity="sha512-s0r9TyYSs5CusSDL5s/QEZQZ4DNYLDXx0S+imS+SHR9mw0Yd0Z5KNS9dw7levSp7GpjOZu/bndds3FEDrKd8dg==" crossorigin="anonymous"></script>
+    <link rel="shortcut icon" type="image/png" href="{% static "favicon.ico" %}" />
     <style>
         .site-footer {
             margin-bottom: 50px;
@@ -74,7 +74,7 @@
 
     <div class="container">
         <div class="site-footer">
-            <span>© 2019 Kleber</span>
+            <span>© 2020 Kleber</span>
             <ul class="navbar-right list-inline">
                 <li><a href="/api/uploads/" class="links">API</a></li>
                 <li><a href="https://github.com/kleber-io/kleber-cli" class="links">CLI</a></li>
@@ -84,7 +84,7 @@
     </div>
 {% endblock %}
 
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="  crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.min.js" integrity="sha512-8qmis31OQi6hIRgvkht0s6mCOittjMa9GMqtK9hes5iEQBQE/Ca6yGE5FsW36vyipGoWQswBj/QBm2JR086Rkw==" crossorigin="anonymous"></script>
 {% block bootstrap3_extra_script %}{% endblock %}
 </body>
