@@ -1,0 +1,21 @@
+version: "3.8"
+   
+services:
+  kleber-db:
+    container_name: kleber-db
+    restart: always
+    image: postgres:9.6
+    volumes:
+      - /home/takeshix/backups/root/var/db/postgres/data96:/var/lib/postgresql/data
+  kleber:
+    container_name: kleber
+    restart: always
+    image: web-kleber
+    working_dir: /srv/kleber
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - kleber-db
+    volumes:
+      - /home/takeshix/backups/root/usr/filepools/kleber:/srv/kleber/uploads
+    ports:
+      - "8000:8000"
