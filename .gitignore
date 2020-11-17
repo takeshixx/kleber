@@ -93,3 +93,4 @@ ENV/
 kleber/kleber_secrets.py
 uploads/
 *.sqlite3
+fabfile.py
