@@ -98,8 +98,9 @@ def uploads_plain(request, shortcut):
                                     content_type=mimetype)
             response['Content-Disposition'] = 'attachment; filename= "{}"'.format(doc.name)
             return response
-        return HttpResponse(doc.uploaded_file.file.read(),
+        resp = HttpResponse(doc.uploaded_file.file.read(),
                             content_type=mimetype)
+        return resp
     else:
         return HttpResponse(doc.content,
                             content_type='text/plain')

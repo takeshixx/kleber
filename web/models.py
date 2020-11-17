@@ -16,7 +16,7 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_delete, post_migrate, pre_save
 from django.dispatch import receiver
-from django.conf import settings
+from django.conf import settings 
 from rest_framework.authtoken.models import Token
 
 LOGGER = logging.getLogger(__name__)
@@ -24,7 +24,8 @@ LOGGER = logging.getLogger(__name__)
 
 class KleberInput(models.Model):
     owner = models.ForeignKey(User,
-                              null=True)
+                              null=True,
+                              on_delete=models.CASCADE)
     name = models.CharField(max_length=100,
                             blank=True,
                             null=True)
@@ -310,10 +311,12 @@ class Voucher(models.Model):
     code = models.TextField()
     owner = models.ForeignKey(User,
                               null=True,
-                              related_name='owner_user')
+                              related_name='owner_user',
+                              on_delete=models.CASCADE)
     receiver = models.ForeignKey(User,
                                  null=True,
-                                 related_name='receiver_user')
+                                 related_name='receiver_user',
+                                 on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True,
                                    blank=True)
     lifetime = models.DateTimeField(blank=True,
