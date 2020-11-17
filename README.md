@@ -75,4 +75,19 @@ LOGGING = {
 }
 ```
 
-The example above shows the recommended way of handling secrets. All secrets are stored in `kleber/kleber_secrets.py` which must not be commited to any repository.
+The example above shows the recommended way of handling secrets. All secrets are stored in `kleber/kleber_secrets.py` which must not be commited to any repository. The following listing shows an example file:
+
+```python
+SECRET_KEY = '...'
+
+EMAIL_HOST = '127.0.0.1'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'info@kleber.io'
+EMAIL_HOST_PASSWORD = "..."
+
+DB_DATABASE = 'postgres'
+DB_USER = 'postgres'
+DB_PASSWORD = '...'
+DB_HOST = '127.0.0.1'
+DB_PORT = 5432
+```
