@@ -1,0 +1,3 @@
+FROM web-kleber-dev
+RUN mv kleber/local_settings_prod_NOTUSE.py kleber/local_settings_prod.py
+CMD uwsgi --http "0.0.0.0:8000" --module kleber.wsgi --master --processes 4 --threads 2
