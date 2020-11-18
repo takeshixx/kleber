@@ -10,7 +10,7 @@ services:
   kleber:
     container_name: kleber
     restart: always
-    image: web-kleber
+    image: web-kleber-dev
     working_dir: /srv/kleber
     command: python manage.py runserver 0.0.0.0:8000
     depends_on:
