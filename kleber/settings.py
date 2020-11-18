@@ -20,7 +20,7 @@ except ImportError:
     SECRET_KEY = "developmentkey"
     SITE_ID = 2
     DEBUG = True
-    ALLOWED_HOSTS = ['dev.kleber.io']
+    ALLOWED_HOSTS = ['*']
     SITE_URL = 'http://dev.kleber.io:8000'
     BASE_PATH = '/srv/kleber'
     UPLOAD_PATH = BASE_PATH + '/uploads/'
