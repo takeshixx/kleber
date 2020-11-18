@@ -91,3 +91,12 @@ DB_PASSWORD = '...'
 DB_HOST = '127.0.0.1'
 DB_PORT = 5432
 ```
+
+## Development Setup
+
+Initialize a new SQLite database:
+
+```bash
+docker exec -it kleber sh
+./manage.py migrate --run-syncdb
+```
