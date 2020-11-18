@@ -9,5 +9,8 @@ up:
 
 up-prod: prod up
 
+restart:
+	ssh root "cd web; sudo docker-compose stop kleber; sudo docker-compose up -d kleber"
+
 run:
 	sudo docker-compose up
