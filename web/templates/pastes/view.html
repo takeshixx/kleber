@@ -48,7 +48,7 @@
     {% if paste.is_encrypted %}
     <script>
         window.onload = function () {
-            var encrypted_content = document.getElementsByClassName('highlight')[0].children[0].innerText;
+            var encrypted_content = document.getElementsByClassName('upload-preview')[0].children[0].innerText;
             if (!encrypted_content) {
                 alert('Unable to read encrypted content');
                 return;
@@ -63,7 +63,7 @@
                 alert('Decryption failed');
                 return;
             }
-            document.getElementsByClassName('highlight')[0].children[0].innerText = plain_content;
+            document.getElementsByClassName('upload-preview')[0].children[0].innerText = plain_content;
         }
     </script>
     {% endif %}
