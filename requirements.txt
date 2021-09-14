@@ -1,9 +1,8 @@
-Django
+Django>=3.0,<4.0
+psycopg2-binary>=2.8
 django-allauth
 django-bootstrap3
 django-cors-headers
 djangorestframework
 Pygments
 python-magic
-fabric
-psycopg2
