@@ -23,8 +23,8 @@ up-prod: prod up
 
 .PHONY: restart
 restart:
-	ssh root "cd web; sudo docker compose stop kleber; sudo docker compose up -d kleber"
+	ssh root "cd web; sudo docker-compose stop kleber; sudo docker compose up -d kleber"
 
 .PHONY: run
 run:
-	sudo docker compose up
+	sudo docker-compose up
