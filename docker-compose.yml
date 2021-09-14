@@ -6,16 +6,21 @@ services:
     restart: always
     image: postgres:9.6
     volumes:
-      - /home/takeshix/backups/root/var/db/postgres/data96:/var/lib/postgresql/data
+      - /Users/takeshix/Projects/kleber/backups/db-dev:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=kleber
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
   kleber:
     container_name: kleber
     restart: always
     image: web-kleber-dev
+    #build: .
     working_dir: /srv/kleber
     command: python manage.py runserver 0.0.0.0:8000
     depends_on:
       - kleber-db
     volumes:
-      - /home/takeshix/backups/root/usr/filepools/kleber:/srv/kleber/uploads
+      - /Users/takeshix/Projects/kleber/backups/uploads-dev:/srv/kleber/uploads
     ports:
       - "8000:8000"

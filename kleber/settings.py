@@ -21,14 +21,18 @@ except ImportError:
     SITE_ID = 2
     DEBUG = True
     ALLOWED_HOSTS = ['*']
-    SITE_URL = 'http://dev.kleber.io:8000'
+    SITE_URL = 'http://localhost:8000'
     BASE_PATH = '/srv/kleber'
     UPLOAD_PATH = BASE_PATH + '/uploads/'
     LOG_PATH = BASE_PATH + '/logs/kleber.log'
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'kleber',
+            'USER': 'postgres',
+            'PASSWORD': 'postgres',
+            'HOST': 'kleber-db',
+            'PORT': 5432,
         }
     }
 
