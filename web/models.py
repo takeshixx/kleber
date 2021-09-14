@@ -245,10 +245,8 @@ class Paste(KleberInput):
             LOGGER.exception(e)
             self.mimetype = 'text/plain'
 
-
 class File(KleberInput):
-    uploaded_file = models.FileField(upload_to=lambda instance, filename: 'uploads/'+filename,
-                                     default=None)
+    uploaded_file = models.FileField(default=None)
     remove_meta = models.BooleanField(default=False)
     remove_meta_message = models.TextField()
     metadata = models.TextField()

@@ -1,3 +1,5 @@
+import os
+import uuid
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
@@ -139,7 +141,7 @@ class UploadFileForm(forms.ModelForm):
     def save(self, commit=True, request=None, *args, **kwargs):
         password = self.cleaned_data['password']
         file = File()
-        path = default_storage.save(settings.UPLOAD_PATH,
+        path = default_storage.save(os.path.join(settings.UPLOAD_PATH, str(uuid.uuid4())),
                                     ContentFile(self.cleaned_data['uploaded_file'].read()))
         file.uploaded_file = path
         file.name = self.cleaned_data['name'] or self.cleaned_data['uploaded_file'].name
