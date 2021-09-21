@@ -14,7 +14,7 @@ services:
   kleber:
     container_name: kleber
     restart: always
-    image: web-kleber-dev
+    image: kleber-dev-arm64
     #build: .
     working_dir: /srv/kleber
     command: python manage.py runserver 0.0.0.0:8000
