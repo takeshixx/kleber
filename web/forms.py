@@ -25,25 +25,25 @@ MAX_UPLOAD_SIZE = 262144000 # 250 MB
 class CreatePasteForm(forms.ModelForm):
     name = forms.CharField(label=_('Name (optional)'),
                            required=False,
-                           help_text=_('Choosing a proper file extension for a paste name allows '
-                                       'to influence syntax highlighting (e.g. use \'test.py\' '
+                           help_text=_('Choosing a proper file extension for a paste name '
+                                       'influences syntax highlighting (e.g., use \'test.py\' '
                                        'to use syntax highlighting for Python snippets).'))
     lifetime = forms.ChoiceField(choices=LIFETIMES,
                                  widget=forms.Select(),
                                  required=True,
-                                 help_text='Pastes will be deleted after 10 days automatically unless they are smaller than 1 MB.')
+                                 help_text='Pastes will be deleted after ten days automatically unless they are smaller than 1 MB.')
     secure_shortcut = forms.BooleanField(required=False,
                                     label=_('Generate a long shortcut'),
                                     help_text=_('Longer shortcuts will be harder to guess. So with '
-                                                'this option it will be harder to find this upload '
+                                                'this option, it will be harder to find this upload '
                                                 'by guessing URLs.'))
     is_encrypted = forms.BooleanField(required=False,
                                       label=_('Encrypt paste'),
-                                      help_text=_('The content of pastes will be encrypted in on '
-                                                  'the client side. The key will only be available '
+                                      help_text=_('The content of pastes will be encrypted on '
+                                                  'the client-side. The key will only be available '
                                                   'in the URL and will never be sent to the server. '
-                                                  'Make sure to copy the link with the key or else '
-                                                  'the content will not be accessible in clear!'))
+                                                  'Make sure to copy the link with the key, or else '
+                                                  'the content will not be accessible in the clear!'))
 
     class Meta:
         model = Paste
@@ -87,28 +87,28 @@ class UploadFileForm(forms.ModelForm):
     name = forms.CharField(label=_('Name (optional)'),
                            required=False,
                            help_text=_('Choosing a proper file extension for a file name allows '
-                                       'to influence syntax highlighting (e.g. use \'test.py\' '
+                                       'influencing syntax highlighting (e.g., use \'test.py\' '
                                        'to use syntax highlighting for Python files).'))
     remove_meta = forms.ChoiceField(choices=[(2, 'Remove metadata'),
                                              (1, 'Do not remove metadata'),
                                              (0, 'Do not touch this file')],
                                     label=_('What to do with the metadata?'),
-                                    help_text=_('Controls what should be done with metadata in '
-                                                'uploaded files.'),
+                                    help_text=_('Remove metadata from uploaded files, read and store metadata '
+                                                'or don\'t touch the file at all.'),
                                     widget=forms.Select(),
                                     required=True)
     lifetime = forms.ChoiceField(choices=LIFETIMES,
                                  widget=forms.Select(),
                                  required=True,
-                                 help_text='Pastes over 1MB in size will be automatically deleted after 10 days.')
+                                 help_text='Pastes over 1MB in size will be automatically deleted after ten days.')
     secure_shortcut = forms.BooleanField(required=False,
                                     label=_('Generate a long shortcut'),
                                     help_text=_('Longer shortcuts will be harder to guess. So with '
-                                                'this option it will be harder to find this upload '
+                                                'this option, it will be harder to find this upload '
                                                 'by guessing URLs.'))
     password_protect = forms.BooleanField(required=False,
                                           label=_('Password protect'),
-                                          help_text=_('Password protected uploads will only be accessible '
+                                          help_text=_('Password-protected uploads will only be accessible '
                                                       'for users that have access to the password.'),
                                           widget=forms.CheckboxInput(attrs={'onclick': 'return protect()'}))
     password = forms.CharField(required=False,
