@@ -145,7 +145,7 @@ class KleberInput(models.Model):
                     break
 
     def set_lexer(self, lexer='auto'):
-        if not lexer or lexer == 'auto' and self.mimetype.startswith('text'):
+        if (not lexer or lexer == 'auto') and self.mimetype.startswith('text'):
             _lexer = None
             if self.name:
                 try:
@@ -158,17 +158,21 @@ class KleberInput(models.Model):
                 except pygments.util.ClassNotFound:
                     pass
             if not _lexer:
-                content = self.get_content()
-                if isinstance(content, bytes):
-                    content = content.decode()
                 try:
+                    content = self.get_content()
+                    if isinstance(content, bytes):
+                        content = content.decode()
                     _lexer = pygments.lexers.guess_lexer(content)
                 except pygments.util.ClassNotFound:
                     pass
-            if _lexer.name == 'Text only':
-                self.lexer = 'text'
-            else:
-                self.lexer = _lexer.name
+                except UnicodeDecodeError:
+                    # We have a file with a text/* mimetype that might be binary.
+                    pass
+            if _lexer:
+                if _lexer.name == 'Text only':
+                    self.lexer = 'text'
+                else:
+                    self.lexer = _lexer.name
         else:
             for _lexer in pygments.lexers.get_all_lexers():
                 if lexer == _lexer[0]:

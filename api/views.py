@@ -73,6 +73,7 @@ class FileViewSet(viewsets.ModelViewSet):
                 file.remove_meta = False
                 file.remove_meta_message = 'Metadata stored, but not removed'
             file.save()
+            return Response(status=204)
         except Exception as e:
             LOGGER.exception(e)
             raise
@@ -116,7 +117,7 @@ class UploadViewSet(mixins.RetrieveModelMixin,
         try:
             shortcut = self.kwargs['pk']
             password = self.request.query_params.get('password', None)
-            upload = File.objects.filter(shortcut=shortcut).first()
+            upload = KleberInput.objects.filter(shortcut=shortcut).first()
             if not upload:
                 raise NotFound
             if upload.is_file and upload.password and \
@@ -124,6 +125,18 @@ class UploadViewSet(mixins.RetrieveModelMixin,
                 raise AuthenticationFailed(detail='Invalid password')
             serializer = self.get_serializer(upload.cast())
             return Response(serializer.data)
+        except Exception as e:
+            LOGGER.exception(e)
+            raise
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            shortcut = self.kwargs['pk']
+            upload = KleberInput.objects.filter(shortcut=shortcut).first()
+            if not upload:
+                raise NotFound
+            upload.delete()
+            return Response(status=204)
         except Exception as e:
             LOGGER.exception(e)
             raise

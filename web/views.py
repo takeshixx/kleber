@@ -29,8 +29,11 @@ def get_uploads(request, shortcut=None):
             doc.delete()
             raise Http404()
         password = request.GET.get('password')
-        if doc.password and not doc.check_password(password):
-            return render(request, 'pastes/password.html', {'paste': doc})
+        if doc.password:
+            if password is None or password == "":
+                return render(request, 'pastes/password.html', {'paste': doc})
+            elif not doc.check_password(password):
+                return render(request, 'pastes/password.html', {'paste': doc, 'error': 'Wrong password!'})                
         highlightcss = pygments.formatters.HtmlFormatter(
             style=pygments.styles.get_style_by_name('colorful')).get_style_defs('.highlight')
         return render(request, 'pastes/view.html', {'paste': doc,
@@ -78,8 +81,11 @@ def uploads_plain(request, shortcut):
         doc.delete()
         raise Http404()
     password = request.GET.get('password')
-    if doc.password and not doc.check_password(password):
-        return render(request, 'pastes/password.html', {'paste': doc})
+    if doc.password:
+        if password is None or password == "":
+            return render(request, 'pastes/password.html', {'paste': doc})
+        elif not doc.check_password(password):
+            return render(request, 'pastes/password.html', {'paste': doc, 'error': 'Wrong password!'})            
     if doc.is_file:
         if doc.mimetype and (doc.mimetype.startswith('image')
                 or doc.mimetype.startswith('video')
