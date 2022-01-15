@@ -1,0 +1,80 @@
+.site-footer {
+    margin-top: 50px !important;
+    border: 1px solid rgba(0,0,0,0.6);
+    font-size: small;
+    padding: 5px 10px;
+    border-radius: 4px!important;
+    background-color: #2e3338;
+}
+.site-footer ul {
+    margin: 0;
+}
+.login-prodiver-icons {
+    font-size: 40px;
+}
+.pagination {
+    margin: 0;
+}
+.upload-info-col {
+    margin: 0 !important;
+}
+.upload-info-row:hover td {
+    background-color: #2e3338;
+}
+.code {
+    width: 100%;
+}
+.highlight pre, .linenodiv pre {
+    border: none;
+    border-radius: 0;
+    background: none;
+    margin: 0; 
+    padding: 10px;
+}
+.highlight pre {
+    border-top-right-radius: .25rem;
+    border-bottom-right-radius: .25rem;
+}
+.download-icon {
+    font-size: 35px;
+    color: #333;
+    border: 2px solid #ddd;
+    padding: 15px;
+    margin: 15px;
+    border-radius: 10px;
+}
+.download-icon:hover {
+    color: black;
+    border: 2px solid grey;
+}
+.image-preview {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    padding: 5px;
+    background: #eee;
+    border-radius: 3px;
+    box-shadow: 0 1px 5px rgba(127,127,127,0.5);
+    -webkit-box-shadow: 0 1px 5px rgba(127,127,127,0.5);
+}
+.upload-view-menu {
+    margin-bottom: 10px;
+}
+.upload-preview {
+    padding: 0;
+}
+.upload-preview-plain {
+    background-color: white;
+    color: black;
+    font-family: monospace;
+    padding: 10px;
+    margin: 0;
+    white-space:normal;
+    border-radius: .25rem;
+}
+.linenodiv pre {
+    color: #c8c8c8;
+}
+.table {
+    margin-bottom: 0;
+}
