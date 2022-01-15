@@ -1,94 +1,93 @@
-{% load bootstrap3 %}
+{% load django_bootstrap5 %}
 {% load static %}
 {% load i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 
 <!DOCTYPE html>
-{% load bootstrap3 %}
+{% load django_bootstrap5 %}
 <html{% if LANGUAGE_CODE %} lang="{{ LANGUAGE_CODE }}"{% endif %}>
 
 <head>
     <meta charset="utf-8">
     <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block bootstrap3_title %}{% block title %}Kleber{% endblock %}{% endblock %}</title>
+    <title>{% block django_bootstrap5_title %}{% block title %}Kleber{% endblock %}{% endblock %}</title>
     
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://bootswatch.com/3/slate/bootstrap.min.css" integrity="sha384-MoPzrehM8e4dbvqGmp8ou+OvZmFvwyFxGhj50p4BL6HX9InZoxAyp5PbrvQW4ZWS" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/regular.min.css" integrity="sha512-rVrbAp27ffQyFnzJ/aC5fZv9JgvL6cdB4zsL5HmM+DhJdzThc/F//62SJF+CaGiOZTP35e1p8JGcc+zRRVuhRw==" crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sjcl/1.0.8/sjcl.min.js" integrity="sha512-s0r9TyYSs5CusSDL5s/QEZQZ4DNYLDXx0S+imS+SHR9mw0Yd0Z5KNS9dw7levSp7GpjOZu/bndds3FEDrKd8dg==" crossorigin="anonymous"></script>
     <link rel="shortcut icon" type="image/png" href="{% static "favicon.ico" %}" />
-    <style>
-        .site-footer {
-            margin-bottom: 50px;
-            border: 1px solid rgba(0,0,0,0.6);
-            font-size: small;
-            padding: 5px 10px;
-            border-radius: 4px!important;
-            background-color: #2e3338;}
-        .site-footer ul {
-            margin: 0;}
-    </style>
-    {% block bootstrap3_extra_head %}{% endblock %}
+    {% bootstrap_css %}
+    <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/kleber.css' %}" rel="stylesheet" type="text/css">
+    {% block django_bootstrap5_extra_head %}{% endblock %}
 </head>
 
 <body>
-{% block bootstrap3_content %}
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/">Kleber</a>
-        </div>
+{% block bootstrap5_before_content %}{% endblock %}
+{% block bootstrap5_content %}
+<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+    <a class="navbar-brand" href="/">Kleber</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav navbar-left">
-                <li><a href="{% url 'upload' %}"><span class="fa fa-paste"></span> New</a></li>
-                {% if user.is_authenticated %}
-                <li><a href="{% url 'upload_history' %}"><span class="fa fa-history"></span> History</a></li>
-                {% endif %}
-                <li><a href="{% url 'about' %}"><span class="glyphicon glyphicon-info-sign"></span> About</a></li>
-                <li><a href="{% url 'cli' %}"><span class="fa fa-terminal" style="font-weight: 900;"></span> CLI</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                {% if user.is_authenticated %}
-                <li><a href="{% url 'users_account' %}"><span class="fa fa-user"></span> Account</a></li>
-                <li><a href="{% url 'account_logout' %}"><span class="fa fa-sign-out"></span> Logout</a></li>
-                {% else %}
-                <li><a href="{% url 'account_signup' %}"><span class="glyphicon glyphicon-list-alt"></span> Register</a></li>
-                <li><a href="{% url 'account_login' %}"><span class="fa fa-sign-in"></span> Login</a></li>
-                {% endif %}
-            </ul>
-        </div>
-      </div>
-    </nav>
-
-    <div class="container">
-{% comment %}        {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}{% endcomment %}
-        {% block content %}(no content){% endblock %}
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'upload' %}"><span class="fa fa-paste"></span> New</a>
+            </li>
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'upload_history' %}"><span class="fa fa-history"></span> History</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'about' %}"><span class="fa fa-info"></span> About</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'cli' %}"><span class="fa fa-terminal" style="font-weight: 900;"></span> CLI</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/api/uploads/"><span class="fa fa-plug" style="font-weight: 900;"></span> API</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav d-flex">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'users_account' %}"><span class="fa fa-user"></span> Account</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'account_logout' %}"><span class="fa fa-sign-out-alt"></span> Logout</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'account_signup' %}"><span class="fa fa-user-plus"></span> Register</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'account_login' %}"><span class="fa fa-sign-in-alt"></span> Login</a>
+            </li>
+            {% endif %}
+        </ul>
     </div>
-
-    <div class="container">
-        <div class="site-footer">
-            <span>© 2021 Kleber</span>
-            <ul class="navbar-right list-inline">
-                <li><a href="/api/uploads/" class="links">API</a></li>
-                <li><a href="https://github.com/kleber-io/kleber-cli" class="links">CLI</a></li>
-                <li><a href="/about/#contact" class="links">Contact</a></li>
-            </ul>
-        </div>
     </div>
+</nav>
+
+<main class="container d-grid gap-3">
+{% comment %}{% autoescape off %}{% bootstrap_messages %}{% endautoescape %}{% endcomment %}
+    {% block content %}(no content){% endblock %}
+</main>
+
+<footer class="footer mt-auto py-3 bg-dark site-footer">
+    <div class="container">
+      <span class="text-muted">© 2022 Kleber</span>
+    </div>
+  </footer>
 {% endblock %}
+{% block bootstrap5_after_content %}{% endblock %}
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
-
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.min.js" integrity="sha512-8qmis31OQi6hIRgvkht0s6mCOittjMa9GMqtK9hes5iEQBQE/Ca6yGE5FsW36vyipGoWQswBj/QBm2JR086Rkw==" crossorigin="anonymous"></script> -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-
-{% block bootstrap3_extra_script %}{% endblock %}
+{% if not 'javascript_in_head'|bootstrap_setting %}
+    {% bootstrap_javascript %}
+{% endif %}
+{% block django_bootstrap5_extra_script %}{% endblock %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sjcl/1.0.8/sjcl.min.js" integrity="sha512-s0r9TyYSs5CusSDL5s/QEZQZ4DNYLDXx0S+imS+SHR9mw0Yd0Z5KNS9dw7levSp7GpjOZu/bndds3FEDrKd8dg==" crossorigin="anonymous"></script>
+<script src="{% static 'js/kleber.js' %}"></script>
 </body>

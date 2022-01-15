@@ -1,42 +1,13 @@
 {% extends "base.html" %}
-{% load bootstrap3 %}
+{% load django_bootstrap5 %}
 {% load metadata %}
-
-{% block bootstrap3_extra_head %}
-    {{ block.super }}
-    <style>
-        .pagination {
-            margin: 0;}
-        .upload-info-col {
-            margin: 0 !important;}
-        .upload-info-row:hover td {
-            background-color: #2e3338;}
-    </style>
-{% endblock %}
 
 {% block title %}{{ block.super }} - Upload History{% endblock %}
 
 {% block content %}
-<div class="panel panel-default">
-    <div class="panel-heading">
+<div class="card">
+    <div class="card-header">
         <b>Upload History</b>
-        <ul class="list-inline pull-right">
-            <li>Quota: <b>{% if quota %}{{ quota|filesizeformat }}{% else %}-{% endif %}</b> / <b>{% if perms.web.quota_unlimited_file %}-{% elif perms.web.quota_4g_file %}4 GB{% elif perms.web.quota_1g_file %}1 GB{% else %}512 MB{% endif %}</b></li>
-            <li>Count: <b>{{ pastes|length }}</b></li>
-            <li>
-                <div class="btn-group">
-                  <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Limit <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a href="{% url 'upload_history' %}?limit=10">10</a></li>
-                    <li><a href="{% url 'upload_history' %}?limit=25">25</a></li>
-                    <li><a href="{% url 'upload_history' %}?limit=50">50</a></li>
-                    <li><a href="{% url 'upload_history' %}?limit=100">100</a></li>
-                  </ul>
-                </div>
-            </li>
-        </ul>
     </div>
     <table class="table table-hover">
         <thead>
@@ -55,13 +26,13 @@
                 <td>
                     <a href="/{{ paste.shortcut }}">{% if paste.name %}{{ paste.name }}{% else %}{{ paste.shortcut }}{% endif %}</a>
                     {% if paste.is_file %}
-                        {% if not paste.remove_meta and paste.metadata %} <span class="label label-warning">Metadata</span>
-                        {% elif not paste.remove_meta %} <span class="label label-danger">Untouched</span>
+                        {% if not paste.remove_meta and paste.metadata %} <span class="badge bg-warning">Metadata</span>
+                        {% elif not paste.remove_meta %} <span class="badge bg-danger">Untouched</span>
                         {% endif %}
                     {% else %}
-                        {% if paste.is_encrypted %} <span class="label label-success">Encrypted</span>{% endif %}
+                        {% if paste.is_encrypted %} <span class="badge bg-success">Encrypted</span>{% endif %}
                     {% endif %}
-                    {% if paste.password %} <span class="label label-success">Password</span>{% endif %}
+                    {% if paste.password %} <span class="badge bg-info">Password</span>{% endif %}
                 </td>
                 <td>{{ paste.mimetype }}</td>
                 <td>{{ paste.size|filesizeformat }}</td>
@@ -69,16 +40,16 @@
                 <td><i class="fa {% if paste.is_file %}fa-file-o" title="File{% else %}fa-pencil-square-o" title="Paste{% endif %}" data-toggle="tooltip" data-placement="bottom"></i></td>
                 <td>
                     {% url 'uploads' shortcut=paste.shortcut as paste_url %}
-                    <button type="button" class="btn btn-info btn-xs" data-toggle="collapse" data-target="#upload-info-{{ paste.shortcut }}">Info</button>
+                    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="collapse" data-bs-target="#upload-info-{{ paste.shortcut }}" aria-expanded="false" aria-controls="upload-info-{{ paste.shortcut }}">Info</button>
                     {% with paste_url|add:"/delete" as paste_url_delete %}
-                        {% bootstrap_button "Delete" href=paste_url_delete button_class="btn-danger btn-xs" %}
+                        {% bootstrap_button "Delete" href=paste_url_delete button_class="btn-danger btn-sm" %}
                     {% endwith %}
                 </td>
             </tr>
             <tr id="upload-info-{{ paste.shortcut }}" class="collapse upload-info-row">
                 <td colspan="8">
                     <ul class="upload-info-col">
-                            <li><b>Shortcut:</b> {{ paste.shortcut }}{% if paste.secure_shortcut %} <span class="label label-info">Secure</span>{% endif %}</li>
+                            <li><b>Shortcut:</b> {{ paste.shortcut }}{% if paste.secure_shortcut %} <span class="badge bg-info">Secure</span>{% endif %}</li>
                         {% if paste.mimetype_long and paste.mimetype_long != paste.mimetype %}
                             <li><b>Mimetype Long:</b> {{ paste.mimetype_long }}</li>
                         {% endif %}
@@ -122,6 +93,26 @@
             {% endfor %}
         </tbody>
     </table>
+    <div class="card-footer">
+        {% bootstrap_pagination lines url="/uploads/?page=1" size="sm" %}
+    </div>
 </div>
-{% bootstrap_pagination lines url="/uploads/?page=1" size="small" %}
+<br/>
+<ul class="list-group list-group-horizontal">
+    <li class="list-group-item">Quota: <b>{% if quota %}{{ quota|filesizeformat }}{% else %}-{% endif %}</b> / <b>{% if perms.web.quota_unlimited_file %}-{% elif perms.web.quota_4g_file %}4 GB{% elif perms.web.quota_1g_file %}1 GB{% else %}512 MB{% endif %}</b></li>
+    <li class="list-group-item">Count: <b>{{ pastes|length }}</b></li>
+    <li class="list-group-item">
+        <div class="dropdown">
+        <button type="button" class="btn btn-sm dropdown-toggle" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            Limit <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li><a class="dropdown-item" href="{% url 'upload_history' %}?limit=10">10</a></li>
+            <li><a class="dropdown-item" href="{% url 'upload_history' %}?limit=25">25</a></li>
+            <li><a class="dropdown-item" href="{% url 'upload_history' %}?limit=50">50</a></li>
+            <li><a class="dropdown-item" href="{% url 'upload_history' %}?limit=100">100</a></li>
+        </ul>
+        </div>
+    </li>
+</ul>
 {% endblock %}

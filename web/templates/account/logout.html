@@ -1,28 +1,24 @@
 {% extends "account/base.html" %}
-
+{% load django_bootstrap5 %}
 {% load i18n %}
 
 {% block head_title %}{% trans "Sign Out" %}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-sm-4 col-sm-offset-4">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <b>Logout</b>
-            </div>
-            <div class="panel-body">
-                <p>{% trans 'Are you sure you want to sign out?' %}</p>
+<div class="card">
+    <div class="card-header">
+        <b>Logout</b>
+    </div>
+    <div class="card-body">
+        <p>{% trans 'Are you sure you want to sign out?' %}</p>
 
-                <form method="post" action="{% url 'account_logout' %}">
-                  {% csrf_token %}
-                  {% if redirect_field_value %}
-                  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
-                  {% endif %}
-                  <button type="submit" class="btn btn-danger">Logout</button>
-                </form>
-            </div>
-        </div>
+        <form method="post" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+            {% endif %}
+            <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+        </form>
     </div>
 </div>
 {% endblock %}

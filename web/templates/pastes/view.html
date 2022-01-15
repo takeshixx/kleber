@@ -1,49 +1,12 @@
 {% extends "base.html" %}
-{% load bootstrap3 %}
+{% load django_bootstrap5 %}
 {% load metadata %}
 
-{% block bootstrap3_extra_head %}
+{% block django_bootstrap5_extra_head %}
     {{ block.super }}
     {% if highlightcss %}
-    <style>{{ highlightcss }}
-        .code {
-            width: 100%;}
-        .highlight pre, .linenodiv pre {
-            border: none;
-            border-radius: 0;
-            background: none;
-            margin: 0; }
-        .linenodiv pre {
-            border-right: 1px solid lightgrey; }
-        .panel-body {
-            padding: 0; }
-        .download-icon {
-            font-size: 35px;
-            color: #333;
-            border: 2px solid #ddd;
-            padding: 15px;
-            margin: 15px;
-            border-radius: 10px;}
-        .download-icon:hover {
-            color: black;
-            border: 2px solid grey;}
-        .image-preview {
-            display: block;
-            margin: 0 auto;
-            max-width: 100%;
-            padding: 5px;
-            background: #eee;
-            border-radius: 3px;
-            box-shadow: 0 1px 5px rgba(127,127,127,0.5);
-            -webkit-box-shadow: 0 1px 5px rgba(127,127,127,0.5);}
-        .upload-view-menu {
-            margin-bottom: 10px;}
-        .upload-preview {
-            width: 100%;
-            overflow: auto;
-            margin: 0;}
-        .linenodiv pre {
-            color: #c8c8c8;}
+    <style>
+        {{ highlightcss }}
     </style>
     {% if paste.is_encrypted %}
     <script>
@@ -73,89 +36,50 @@
 {% block title %}{{ block.super }}{% endblock %}
 
 {% block content %}
-<div class="text-center">
-    <div class="btn-group upload-view-menu" role="group">
-        <a role="button" class="btn btn-default" href="/{{ paste.shortcut }}/{% if password %}?password={{ password }}{% endif %}" data-toggle="tooltip" data-placement="bottom" title="Display raw paste content">Raw</a>
-        <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#upload_info">Info</button>
-        <a role="button" class="btn btn-default" href="/uploads/new/{{ paste.shortcut }}" data-toggle="tooltip" data-placement="bottom" title="Upload content as new paste">Repaste</a>
-    {% if paste.owner == user %}
-    </div>
-    <div class="btn-group upload-view-menu" role="group">
-        {% url 'delete' shortcut=paste.shortcut as paste_url_delete %}
-        {% bootstrap_button "Delete" href=paste_url_delete button_class="btn-danger" %}
-    {% endif %}
-    </div>
-</div>
-
-<div id="upload_info" class="collapse">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <b>Upload info</b>
+<div class="row">
+    <div class="col">
+        <div class="text-center">
+            <ul class="list-group list-group-horizontal-sm">
+                <li class="list-group-item">
+                    <span>
+                        Name: <b>{% if paste.name %}{{ paste.name }}{% else %}{{ paste.shortcut }}{% endif %}
+                        {% if paste.is_encrypted %} <span class="badge bg-success">Encrypted</span>{% endif %}
+                        {% if paste.is_file and paste.metadata %} <span class="badge bg-warning">Metadata</span>{% endif %}
+                        {% if paste.password %} <span class="badge bg-info">Password</span>{% endif %}</b>
+                    </span>
+                </li>
+                <li class="list-group-item">
+                    <span>
+                        Mimetype: <b>{{ paste.mimetype }}</b>
+                    </span>
+                </li>
+                <li class="list-group-item">
+                    <span>
+                        Size: <b>{{ paste.size|filesizeformat }}</b>
+                    </span>
+                </li>
+                <li class="list-group-item">
+                    <i class="fa {% if paste.is_file %}fa-file" title="File{% else %}fa-pen-square" title="Paste{% endif %}" data-toggle="tooltip" data-placement="bottom"></i>
+                </li>
+            </ul>
         </div>
-        <table class="table">
-            <tbody>
-                <tr><td><b>Shortcut:</b></td><td>{{ paste.shortcut }}{% if paste.secure_shortcut %} <span class="label label-info">Secure</span>{% endif %}</td></tr>
-                <tr><td><b>Mimetype:</b></td><td>{{ paste.mimetype }}</td></tr>
-            {% if paste.mimetype_long and paste.mimetype_long != paste.mimetype %}
-                <tr><td><b>Mimetype Long:</b></td><td>{{ paste.mimetype_long }}</td></tr>
-            {% endif %}
-                <tr><td><b>Creation Date:</b></td><td>{{ paste.created }}</td></tr>
-            {% if paste.lifetime %}
-                <tr><td><b>Deletion Date:</b></td><td>{{ paste.lifetime }}</td></tr>
-            {% endif %}
-                <tr><td><b>Size:</b></td><td>{{ paste.size|filesizeformat }}</td></tr>
-            {% if paste.is_file %}
-                {% if paste.checksum %}
-                    <tr><td><b>Checksum (SHA256):</b></td><td>{{ paste.checksum }}</td></tr>
-                {% endif %}
-                {% if paste.clean_checksum and paste.checksum != paste.clean_checksum %}
-                    <tr><td><b>Checksum clean (SHA256):</b></td><td>{{ paste.clean_checksum }}</td></tr>
-                {% endif %}
-                {% if paste.remove_meta_message %}
-                    <tr><td><b>Metadata Message:</b></td><td>{{ paste.remove_meta_message }}</td></tr>
-                {% endif %}
-                {% if paste.metadata %}
-                    <tr><td><b>Metadata:</b></td><td>
-                        <table>
-                            <tbody>
-                            {% with paste.metadata|print_metadata as metadata %}
-                                {% for meta,data in metadata.items %}
-                                <tr><td><b>{{ meta }}</b></td><td>{{ data }}</td></tr>
-                                {% endfor %}
-                            {% endwith %}
-                            </tbody>
-                        </table>
-                    </td></tr>
-                {% endif %}
-            {% else %}
-                <tr><td><b>Lexer:</b></td><td>{{ paste.lexer }}</td></tr>
-            {% endif %}
-            </tbody>
-        </table>
     </div>
 </div>
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <b>{% if paste.name %}{{ paste.name }}{% else %}{{ paste.shortcut }}{% endif %}
-                {% if paste.is_encrypted %} <span class="label label-success">encrypted</span>{% endif %}
-                {% if paste.is_file and paste.metadata %} <span class="label label-warning">Metadata</span>{% endif %}
-                {% if paste.password %} <span class="label label-success">Password</span>{% endif %}
-                </b>
-        <ul class="list-inline pull-right">
-            <li>Mimetype: <b>{{ paste.mimetype }}</b></li>
-            <li>Size: <b>{{ paste.size|filesizeformat }}</b></li>
-            <li><i class="fa {% if paste.is_file %}fa-file-o" title="File{% else %}fa-pencil-square-o" title="Paste{% endif %}" data-toggle="tooltip" data-placement="bottom"></i></li>
-        </ul>
-    </div>
-    <div class="panel-body upload-preview">
+<div class="row">
+    <div class="col">
         {% if paste.is_file %}
             {% if paste.mimetype and paste.mimetype|slice:":4" == 'text' and paste.size < 5000000 %}
+            <div class="card">
+                <div class="card-body upload-preview">
                 {% if paste.lexer %}
                     {{ paste.content_lexed|safe }}
                 {% else %}
-                    {{ paste.content }}
+                    <pre class="upload-preview-plain">
+                        {{ paste.content }}
+                    </pre>
                 {% endif %}
+                </div>
+            </div>
             {% elif paste.mimetype and paste.mimetype|slice:":5" == 'image' %}
                 <div class="text-center">
                     <img class="image-preview" src="{% url 'uploads_plain' shortcut=paste.shortcut %}{% if password %}?password={{ password }}{% endif %}" />
@@ -163,17 +87,100 @@
             {% elif paste.mimetype == 'application/pdf' %}
                 <embed src="{% url 'uploads_plain' shortcut=paste.shortcut %}{% if password %}?password={{ password }}{% endif %}" style="width: 100%; height: 100%; min-height: 600px;">
             {% else %}
-                <div class="text-center">
-                    <a href="{% url 'uploads_plain' shortcut=paste.shortcut %}"><i class="glyphicon glyphicon-cloud-download download-icon" aria-hidden="true"></i></a>
+                <div class="card border-info">
+                    <div class="card-header">
+                        <div class="text-center">
+                            <b>Preview not available</b>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center">
+                            <a class="btn btn-info btn-lg" href="{% url 'uploads_plain' shortcut=paste.shortcut %}" role="button">Download</a>
+                        </div>
+                    </div>
                 </div>
             {% endif %}
         {% else %}
+        <div class="card">
+            <div class="card-body upload-preview">
             {% if paste.lexer %}
                 {{ paste.content_lexed|safe }}
             {% else %}
-                <pre>{{ paste.content }}</pre>
+                <pre class="upload-preview-plain">
+                    {{ paste.content }}
+                </pre>
             {% endif %}
+            </div>
+        </div>
         {% endif %}
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="text-center">
+            <div class="btn-group upload-view-menu" role="group">
+                <a role="button" class="btn btn-primary btn-sm" href="/{{ paste.shortcut }}/{% if password %}?password={{ password }}{% endif %}" data-toggle="tooltip" data-placement="bottom" title="Display raw paste content">Raw</a>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="collapse" data-bs-target="#upload_info" aria-expanded="false" aria-controls="upload_info">Info</button>
+                <a role="button" class="btn btn-primary btn-sm" href="/uploads/new/{{ paste.shortcut }}" data-toggle="tooltip" data-placement="bottom" title="Upload content as new paste">Repaste</a>
+            {% if paste.owner == user %}
+            </div>
+            <div class="btn-group upload-view-menu" role="group">
+                {% url 'delete' shortcut=paste.shortcut as paste_url_delete %}
+                {% bootstrap_button "Delete" href=paste_url_delete button_class="btn btn-danger btn-sm" %}
+            {% endif %}
+            </div>
+        </div>            
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div id="upload_info" class="collapse">
+            <div class="card">
+                <div class="card-header">
+                    <b>Upload info</b>
+                </div>
+                <table class="table">
+                    <tbody>
+                        <tr><td><b>Shortcut:</b></td><td>{{ paste.shortcut }}{% if paste.secure_shortcut %} <span class="badge bg-info">Secure</span>{% endif %}</td></tr>
+                        <tr><td><b>Mimetype:</b></td><td>{{ paste.mimetype }}</td></tr>
+                    {% if paste.mimetype_long and paste.mimetype_long != paste.mimetype %}
+                        <tr><td><b>Mimetype Long:</b></td><td>{{ paste.mimetype_long }}</td></tr>
+                    {% endif %}
+                        <tr><td><b>Creation Date:</b></td><td>{{ paste.created }}</td></tr>
+                    {% if paste.lifetime %}
+                        <tr><td><b>Deletion Date:</b></td><td>{{ paste.lifetime }}</td></tr>
+                    {% endif %}
+                        <tr><td><b>Size:</b></td><td>{{ paste.size|filesizeformat }}</td></tr>
+                    {% if paste.is_file %}
+                        {% if paste.checksum %}
+                            <tr><td><b>Checksum (SHA256):</b></td><td>{{ paste.checksum }}</td></tr>
+                        {% endif %}
+                        {% if paste.clean_checksum and paste.checksum != paste.clean_checksum %}
+                            <tr><td><b>Checksum clean (SHA256):</b></td><td>{{ paste.clean_checksum }}</td></tr>
+                        {% endif %}
+                        {% if paste.remove_meta_message %}
+                            <tr><td><b>Metadata Message:</b></td><td>{{ paste.remove_meta_message }}</td></tr>
+                        {% endif %}
+                        {% if paste.metadata %}
+                            <tr><td><b>Metadata:</b></td><td>
+                                <table>
+                                    <tbody>
+                                    {% with paste.metadata|print_metadata as metadata %}
+                                        {% for meta,data in metadata.items %}
+                                        <tr><td><b>{{ meta }}</b></td><td>{{ data }}</td></tr>
+                                        {% endfor %}
+                                    {% endwith %}
+                                    </tbody>
+                                </table>
+                            </td></tr>
+                        {% endif %}
+                    {% else %}
+                        <tr><td><b>Lexer:</b></td><td>{{ paste.lexer }}</td></tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

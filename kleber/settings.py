@@ -60,7 +60,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'bootstrap3',
+    'django_bootstrap5',
     'rest_framework',
     'web',
     'django.contrib.sites',
@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
     'rest_framework.authtoken',
+    'fontawesomefree',
 ]
 
 MIDDLEWARE = [
@@ -137,3 +138,20 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
+BOOTSTRAP5 = {
+    "css_url": {
+        "url": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.1/css/bootstrap.min.css",
+        "integrity": "sha512-6KY5s6UI5J7SVYuZB4S/CZMyPylqyyNZco376NM2Z8Sb8OxEdp02e1jkKk/wZxIEmjQ6DRCEBhni+gpr9c4tvA==",
+        "crossorigin": "anonymous",
+    },
+    "javascript_url": {
+        "url": "https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.1/js/bootstrap.bundle.min.js",
+        "integrity": "sha512-trzlduO3EdG7Q0xK4+A+rPbcolVt37ftugUSOvrHhLR5Yw5rsfWXcpB3CPuEBcRBCHpc+j18xtQ6YrtVPKCdsg==",
+        "crossorigin": "anonymous",
+    },
+
+    "theme_url": "https://bootswatch.com/5/slate/bootstrap.min.css",
+
+    # Put JavaScript in the HEAD section of the HTML document (only relevant if you use bootstrap5.html).
+    'javascript_in_head': False,
+}

@@ -1,117 +1,106 @@
 {% extends "base.html" %}
-{% load bootstrap3 %}
-
-{% block bootstrap3_extra_head %}
-    {{ block.super }}
-    <style>
-
-    </style>
-{% endblock %}
+{% load django_bootstrap5 %}
 
 {% block title %}{{ block.super }} - User Account{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-xs-6 col-xs-offset-3">
-        <div class="panel panel-primary">
-            <div class="panel-heading"><b>User Profile</b></div>
-            <table class="table">
-                <tr><td><b>Uername</b></td><td>{{ request.user.username }}</td></tr>
-                <tr><td><b>Email address</b></td><td>{{ request.user.email }}</td></tr>
-                <tr><td><b>Registration date</b></td><td>{{ request.user.date_joined }}</td></tr>
-            </table>
-            <div class="panel-footer">
-                <div class="btn-toolbar" role="toolbar">
-                    {% url 'account_email' as userchange_url %}
-                    {% bootstrap_button "Change E-mail Address" button_class="btn btn-primary" href=userchange_url %}
-                    {% url 'account_change_password' as pwchange_url %}
-                    {% bootstrap_button "Change Password" button_class="btn btn-primary" href=pwchange_url %}
-                    {% bootstrap_button "Delete Account" button_class="btn btn-danger" href="#" %}
-                </div>
-            </div>
+<div class="card border-primary">
+    <div class="card-header">
+        <b>User Profile</b>
+    </div>
+    <table class="table">
+        <tr><td><b>Uername</b></td><td>{{ request.user.username }}</td></tr>
+        <tr><td><b>Email address</b></td><td>{{ request.user.email }}</td></tr>
+        <tr><td><b>Registration date</b></td><td>{{ request.user.date_joined }}</td></tr>
+    </table>
+    <div class="card-footer">
+        <div class="btn-toolbar" role="toolbar">
+            {% url 'account_email' as userchange_url %}
+            {% bootstrap_button "Change E-mail Address" button_class="btn btn-primary btn-sm" href=userchange_url %}
+            {% url 'account_change_password' as pwchange_url %}
+            {% bootstrap_button "Change Password" button_class="btn btn-primary btn-sm" href=pwchange_url %}
+            {% bootstrap_button "Delete Account" button_class="btn btn-danger btn-sm" href="#" %}
         </div>
     </div>
 </div>
-<div class="row">
-    <div class="col-xs-6 col-xs-offset-3">
-        <div class="panel panel-info">
-            <div class="panel-heading"><b>Authentication Token</b></div>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Token</th>
-                        <th>Creation Date</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if tokens %}
-                    {% for token in tokens %}
-                    <tr>
-                        <td>{{ token.key }}</td>
-                        <td>{{ token.created }}</td>
-                        <td>
-                        {% url 'users_token_delete' token=token.key as token_url_delete %}
-                        {% bootstrap_button "Delete" href=token_url_delete button_class="btn-danger btn-xs" %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    {% endif %}
-                </tbody>
-            </table>
-            {% if not tokens %}
-            <div class="panel-footer">
-                <div class="btn-toolbar" role="toolbar">
-                    {% url 'users_token_create' as token_url_create %}
-                    {% bootstrap_button "Create Authentication Token" button_class="btn-primary" href=token_url_create %}
-                </div>
-            </div>
+
+<div class="card border-info">
+    <div class="card-header">
+        <b>Authentication Token</b>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Token</th>
+                <th>Creation Date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if tokens %}
+            {% for token in tokens %}
+            <tr>
+                <td>{{ token.key }}</td>
+                <td>{{ token.created }}</td>
+                <td>
+                {% url 'users_token_delete' token=token.key as token_url_delete %}
+                {% bootstrap_button "Delete" href=token_url_delete button_class="btn-danger btn-sm" %}
+                </td>
+            </tr>
+            {% endfor %}
             {% endif %}
+        </tbody>
+    </table>
+    {% if not tokens %}
+    <div class="card-footer">
+        <div class="btn-toolbar" role="toolbar">
+            {% url 'users_token_create' as token_url_create %}
+            {% bootstrap_button "Create Authentication Token" button_class="btn-primary btn-sm" href=token_url_create %}
         </div>
     </div>
+    {% endif %}
 </div>
+
 {% if user.is_authenticated and perms.web.add_voucher %}
-<div class="row">
-    <div class="col-xs-6 col-xs-offset-3">
-        <div class="panel panel-warning">
-            <div class="panel-heading"><b>Vouchers</b></div>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Code</th>
-                        <th>Receiver</th>
-                        <th>Creation Date</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if vouchers %}
-                    {% for voucher in vouchers %}
-                    <tr>
-                        <td>{{ voucher.code }}</td>
-                        <td>{% if voucher.receiver %}
-                            {{ voucher.receiver.email }}
-                        {% else %}
-                            -
-                        {% endif %}</td>
-                        <td>{{ voucher.created }}</td>
-                        <td>
-                        {% if not voucher.used %}
-                        {% url 'users_voucher_delete' code=voucher.code as voucher_url_delete %}
-                        {% bootstrap_button "Delete" href=voucher_url_delete button_class="btn-danger btn-xs" %}
-                        {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    {% endif %}
-                </tbody>
-            </table>
-            <div class="panel-footer">
-                <div class="btn-toolbar" role="toolbar">
-                    {% url 'users_voucher_create' as voucher_url_create %}
-                    {% bootstrap_button "Create Voucher" button_class="btn-primary" href=voucher_url_create %}
-                </div>
-            </div>
+<div class="card border-warning">
+    <div class="card-header">
+        <b>Vouchers</b>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Receiver</th>
+                <th>Creation Date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if vouchers %}
+            {% for voucher in vouchers %}
+            <tr>
+                <td>{{ voucher.code }}</td>
+                <td>{% if voucher.receiver %}
+                    {{ voucher.receiver.email }}
+                {% else %}
+                    -
+                {% endif %}</td>
+                <td>{{ voucher.created }}</td>
+                <td>
+                {% if not voucher.used %}
+                {% url 'users_voucher_delete' code=voucher.code as voucher_url_delete %}
+                {% bootstrap_button "Delete" href=voucher_url_delete button_class="btn-danger btn-sm" %}
+                {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+    <div class="card-footer">
+        <div class="btn-toolbar" role="toolbar">
+            {% url 'users_voucher_create' as voucher_url_create %}
+            {% bootstrap_button "Create Voucher" button_class="btn-primary btn-sm" href=voucher_url_create %}
         </div>
     </div>
 </div>
